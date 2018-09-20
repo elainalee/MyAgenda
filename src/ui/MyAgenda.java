@@ -15,27 +15,28 @@ public class MyAgenda {
                     " " + "If you are done with every operations, enter quit.");
             operation = scanner.nextLine();
             System.out.println("you selected: "+operation);
-            int result = 0;
+            String result;
             if (operation.equals("1")) {
                 result = AddSchedule(opSchedule);
+                System.out.println(result);
+
             }
             else if (operation.equals("quit")) {
                 break;
             }
-            System.out.println("The schedule has been added.");
             operationSchedule.add(opSchedule);
         }
         System.out.println("Thank you for using the system.");
 
     }
 
-    private int AddSchedule(MySchedule mySchedule) {
+    private String AddSchedule(MySchedule mySchedule) {
         System.out.println("Please enter the context of schedule");
         String first = scanner.next();
         scanner.nextLine(); //clears the line,
         // otherwise the carriage return is taken as the next input
         // and you get a blank "selected" loop
-        return 0;
+        return "The schedule has been added.";
     }
 
 
