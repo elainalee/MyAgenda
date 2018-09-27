@@ -1,6 +1,7 @@
 package ui;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 //copied from LoggingCalculator
 public class MyAgenda {
@@ -12,7 +13,6 @@ public class MyAgenda {
     //EFFECTS: nothing
     public MyAgenda() {
         String operation;
-
         while (true) {
             MyEvent opEvent = new MyEvent();
             System.out.println("what would you like to do? [1] add an event [2] find an event [3] see the entire schedules.");
@@ -76,7 +76,7 @@ public class MyAgenda {
         String one = scanner.next();
         MyEvent theEvent = null;
         for (MyEvent me : operationSchedule) {
-            if (one.equals(me.context))
+            if (one.equals(me.ContextIs()))
                 theEvent = me;
         }
         scanner.nextLine();
