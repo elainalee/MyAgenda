@@ -7,7 +7,9 @@ public class MyAgenda {
     ArrayList<MyEvent> operationSchedule = new ArrayList<>();
     Scanner scanner = new Scanner(System.in);
 
-
+    //REQUIRES: nothing
+    //MODIFIES: nothing
+    //EFFECTS: nothing
     public MyAgenda() {
         String operation;
 
@@ -19,9 +21,10 @@ public class MyAgenda {
             System.out.println("you selected: " + operation);
 
             if (operation.equals("1")) {
-                String result;
+                MyEvent result;
                 result = AddSchedule(opEvent);
-                System.out.println(result);
+                operationSchedule.add(result);
+                System.out.println("The event has been added.");
             }
             else if (operation.equals("2")) {
                 MyEvent result;
@@ -46,7 +49,10 @@ public class MyAgenda {
     }
 
 
-    private String AddSchedule(MyEvent myEvent) {
+    //REQUIRES: nothing
+    //MODIFIES: this
+    //EFFECTS: adds context, place, and date to myEvent ,returns modified myEvent
+    private MyEvent AddSchedule(MyEvent myEvent) {
         System.out.println("Please enter the context of event.");
         String first = scanner.next();
         System.out.println("Please enter the place of the event.");
@@ -59,13 +65,14 @@ public class MyAgenda {
         myEvent.SetContext(first);
         myEvent.SetPlace(second);
         myEvent.SetDate(third);
-        operationSchedule.add(myEvent);
-        return "The event has been added.";
+        return myEvent;
     }
 
+    //REQUIRES: nothing
+    //MODIFIES: nothing
+    //EFFECTS: returns the requested event
     private MyEvent FindSchedule() {
         System.out.println("Enter the context of the event you're trying to find.");
-        System.out.println(operationSchedule);
         String one = scanner.next();
         MyEvent theEvent = null;
         for (MyEvent me : operationSchedule) {
