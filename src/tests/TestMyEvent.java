@@ -12,15 +12,13 @@ public class TestMyEvent {
     @BeforeAll
     public void SetUp() {
         testEvent = new MyEvent();
-        testEvent.SetContext("testContext");
-        testEvent.SetDate("testDate");
-        testEvent.SetPlace("testPlace");
     }
 
 
     // test if the method takes in the string
     @Test
     public void TestSetContext() {
+        testEvent.SetContext("testContext");
         String ContextExample;
         ContextExample = testEvent.ContextIs();
         assertTrue (ContextExample.equals("testContext"));

@@ -14,15 +14,22 @@ public class MyAgenda {
     public MyAgenda() {
         String operation;
         while (true) {
-            MyEvent opEvent = new MyEvent();
+
             System.out.println("what would you like to do? [1] add an event [2] find an event [3] see the entire schedules.");
             System.out.println("If you are done with every operations, enter quit.");
             operation = scanner.nextLine();
             System.out.println("you selected: " + operation);
 
             if (operation.equals("1")) {
+                MyEvent opEvent = new MyEvent();
                 MyEvent result;
-                result = AddSchedule(opEvent);
+                System.out.println("Please enter the context of event.");
+                String first = scanner.next();
+                System.out.println("Please enter the place of the event.");
+                String second = scanner.next();
+                System.out.println("Please enter the date of the event.");
+                String third = scanner.next();
+                result = AddSchedule(opEvent, first, second, third);
                 operationSchedule.add(result);
                 System.out.println("The event has been added.");
             }
@@ -52,19 +59,10 @@ public class MyAgenda {
     //REQUIRES: nothing
     //MODIFIES: this
     //EFFECTS: adds context, place, and date to myEvent ,returns modified myEvent
-    private MyEvent AddSchedule(MyEvent myEvent) {
-        System.out.println("Please enter the context of event.");
-        String first = scanner.next();
-        System.out.println("Please enter the place of the event.");
-        String second = scanner.next();
-        System.out.println("Please enter the date of the event.");
-        String third = scanner.next();
-        scanner.nextLine(); //clears the line,
-        // otherwise the carriage return is taken as the next input
-        // and you get a blank "selected" loop
-        myEvent.SetContext(first);
-        myEvent.SetPlace(second);
-        myEvent.SetDate(third);
+    public MyEvent AddSchedule(MyEvent myEvent, String context, String place, String date) {
+        myEvent.SetContext(context);
+        myEvent.SetPlace(place);
+        myEvent.SetDate(date);
         return myEvent;
     }
 
