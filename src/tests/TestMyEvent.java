@@ -1,18 +1,15 @@
 package tests;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ui.MyEvent;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestMyEvent {
-    MyEvent testEvent;
-
-    @BeforeAll
-    public void SetUp() {
-        testEvent = new MyEvent();
-    }
+    MyEvent testEvent = new MyEvent();
 
 
     // test if the method takes in the string
@@ -21,23 +18,26 @@ public class TestMyEvent {
         testEvent.SetContext("testContext");
         String ContextExample;
         ContextExample = testEvent.ContextIs();
-        assertTrue (ContextExample.equals("testContext"));
+        assertEquals("testContext", ContextExample);
     }
 
     // test if the method takes in the string
     @Test
     public void TestSetPlace() {
+        testEvent.SetPlace("testPlace");
         String PlaceExample;
         PlaceExample = testEvent.PlaceIs();
-        assertTrue(PlaceExample.equals("testPlace"));
+        assertEquals("testPlace", PlaceExample);
     }
 
-    // test if the method takes in the string
+    // test if the method takes in the date
     @Test
-    public void TestSetDate() {
+    public void TestSetDate() throws ParseException {
+        testEvent.SetDate("1999/09/29", "1");
         String DateExample;
-        DateExample = testEvent.DateIs();
-        assertTrue(DateExample.equals("testDate"));
+        SimpleDateFormat datePrintform = new SimpleDateFormat("'<'E 'at' h a '>' MMM dd, yyyy");
+        DateExample = datePrintform.format(testEvent.DateIs());
+        assertEquals("<Wed at 1 AM > Sep 29, 1999", DateExample);
     }
 
 }

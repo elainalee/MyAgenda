@@ -1,5 +1,6 @@
 package ui;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -11,7 +12,7 @@ public class MyAgenda {
     //REQUIRES: nothing
     //MODIFIES: nothing
     //EFFECTS: nothing
-    public MyAgenda() {
+    public MyAgenda() throws ParseException {
         String operation;
         while (true) {
             MyEvent opEvent = new MyEvent();
@@ -57,19 +58,21 @@ public class MyAgenda {
     //REQUIRES: nothing
     //MODIFIES: this
     //EFFECTS: adds context, place, and date to myEvent, returns modified myEvent
-    private MyEvent AddSchedule(MyEvent myEvent) {
+    private MyEvent AddSchedule(MyEvent myEvent) throws ParseException {
         System.out.println("Please enter the context of event.");
         String first = scanner.next();
         System.out.println("Please enter the place of the event.");
         String second = scanner.next();
-        System.out.println("Please enter the date of the event.");
+        System.out.println("Please enter the date of the event in format <yyyy/MM/dd>");
         String third = scanner.next();
+        System.out.println("Please enter the time of the event in 24 hours format");
+        String four = scanner.next();
         scanner.nextLine(); //clears the line,
         // otherwise the carriage return is taken as the next input
         // and you get a blank "selected" loop
         myEvent.SetContext(first);
         myEvent.SetPlace(second);
-        myEvent.SetDate(third);
+        myEvent.SetDate(third, four);
         return myEvent;
     }
 
@@ -106,7 +109,7 @@ public class MyAgenda {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParseException {
         new MyAgenda();
     }
 }
