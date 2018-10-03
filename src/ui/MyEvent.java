@@ -1,6 +1,7 @@
 package ui;
 
 public class MyEvent {
+    MyEvent myEvent;
     String context;
     String date;
     String place;
@@ -36,6 +37,16 @@ public class MyEvent {
 
     public String DateIs() {
         return date;
+    }
+
+    //REQUIRES: nothing
+    //MODIFIES: this
+    //EFFECTS: adds context, place, and date to myEvent ,returns modified myEvent
+    public MyEvent AddSchedule(String context, String place, String date) {
+        SetContext(context);
+        SetPlace(place);
+        SetDate(date);
+        return myEvent;
     }
 
     //REQUIRES: nothing
