@@ -33,7 +33,7 @@ public class TestMyEvent {
     // test if the method takes in the date
     @Test
     public void TestSetDate() throws ParseException {
-        testEvent.SetDate("1999/09/29", "1");
+        testEvent.SetDate(testEvent.MakeDate("1999/09/29", "1"));
         String DateExample;
         SimpleDateFormat datePrintform = new SimpleDateFormat("'<'E 'at' h a '>' MMM dd, yyyy");
         DateExample = datePrintform.format(testEvent.DateIs());

@@ -2,8 +2,13 @@ package ui;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 //copied from LoggingCalculator
@@ -16,6 +21,7 @@ public class MyAgenda {
     //EFFECTS: nothing
     public MyAgenda() throws ParseException, IOException {
         String operation;
+        load();
         while (true) {
             System.out.println("what would you like to do? [1] add an event [2] delete an event [3] find an event [4] see the entire schedules.");
             System.out.println("If you are done with every operations, enter quit.");
@@ -28,10 +34,12 @@ public class MyAgenda {
                 result = AddSchedule(opEvent);
                 operationSchedule.add(result);
                 System.out.println("The event has been added.");
+                save();
             }
 
             else if (operation.equals("2")) {
                 DeleteSchedule();
+                save();
             }
 
             else if (operation.equals("3")) {
@@ -49,7 +57,6 @@ public class MyAgenda {
             }
 
             else if (operation.equals("quit")) {
-                save();
                 break;
             }
 
@@ -77,7 +84,7 @@ public class MyAgenda {
         // and you get a blank "selected" loop
         myEvent.SetContext(first);
         myEvent.SetPlace(second);
-        myEvent.SetDate(third, four);
+        myEvent.SetDate(myEvent.MakeDate(third, four));
         return myEvent;
     }
 
@@ -113,23 +120,43 @@ public class MyAgenda {
         return theEvent;
     }
 
+    //REQUIRES: nothing
+    //MODIFIES: TheSchedule
+    //EFFECTS: save the operationSchedule to TheSchedule file
+    // Copied from FileReaderWriter
     private void save() throws IOException {
-        PrintWriter context = new PrintWriter("TheSchedule_context","UTF-8");
-        PrintWriter date = new PrintWriter("TheSchedule_date","UTF-8");
-        PrintWriter place = new PrintWriter("TheSchedule_place","UTF-8");
+        SimpleDateFormat datePrintform = new SimpleDateFormat("'<'E 'at' h a'>' MMM dd, yyyy");
+        PrintWriter context = new PrintWriter("TheSchedule","UTF-8");
         for (MyEvent me : operationSchedule) {
-            context.println(me.context);
-            date.println(me.date);
-            place.println(me.place);
+            context.println(me.context + "  " +
+                    datePrintform.format(me.date)
+                    + "  " + me.place);
         }
         context.close();
-        date.close();
-        place.close();
     }
 
-    private void load() {
-        //stub
+    //REQUIRES: nothing
+    //MODIFIES: TheSchedule
+    //EFFECTS: load the TheSchedule file to the operationSchedule
+    private void load() throws IOException, ParseException {
+        SimpleDateFormat datePrintform = new SimpleDateFormat("'<'E 'at' h a'>' MMM dd, yyyy");
+        List<String> lines = Files.readAllLines(Paths.get("TheSchedule"));
+        for (String line : lines) {
+            ArrayList<String> partsOfLine = splitOnSpace(line);
+            MyEvent savedEvent = new MyEvent();
+            savedEvent.SetContext(partsOfLine.get(0));
+            savedEvent.SetDate(datePrintform.parse(partsOfLine.get(1)));
+            savedEvent.SetPlace(partsOfLine.get(2));
+            operationSchedule.add(savedEvent);
+        }
     }
+
+    // Copied from FileReaderWriter
+    public static ArrayList<String> splitOnSpace(String line){
+        String[] splits = line.split("  ");
+        return new ArrayList<>(Arrays.asList(splits));
+    }
+
 
 
     public static void main(String[] args) throws ParseException, IOException {
