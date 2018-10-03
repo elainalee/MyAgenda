@@ -1,5 +1,7 @@
 package ui;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -12,16 +14,16 @@ public class MyAgenda {
     //REQUIRES: nothing
     //MODIFIES: nothing
     //EFFECTS: nothing
-    public MyAgenda() throws ParseException {
+    public MyAgenda() throws ParseException, IOException {
         String operation;
         while (true) {
-            MyEvent opEvent = new MyEvent();
             System.out.println("what would you like to do? [1] add an event [2] delete an event [3] find an event [4] see the entire schedules.");
             System.out.println("If you are done with every operations, enter quit.");
             operation = scanner.nextLine();
             System.out.println("you selected: " + operation);
 
             if (operation.equals("1")) {
+                MyEvent opEvent = new MyEvent();
                 MyEvent result;
                 result = AddSchedule(opEvent);
                 operationSchedule.add(result);
@@ -41,10 +43,13 @@ public class MyAgenda {
                 }
                 else System.out.println(result);
             }
+
             else if (operation.equals("4")) {
-                System.out.println(operationSchedule);}
+                System.out.println(operationSchedule);
+            }
 
             else if (operation.equals("quit")) {
+                save();
                 break;
             }
 
@@ -108,8 +113,26 @@ public class MyAgenda {
         return theEvent;
     }
 
+    private void save() throws IOException {
+        PrintWriter context = new PrintWriter("TheSchedule_context","UTF-8");
+        PrintWriter date = new PrintWriter("TheSchedule_date","UTF-8");
+        PrintWriter place = new PrintWriter("TheSchedule_place","UTF-8");
+        for (MyEvent me : operationSchedule) {
+            context.println(me.context);
+            date.println(me.date);
+            place.println(me.place);
+        }
+        context.close();
+        date.close();
+        place.close();
+    }
 
-    public static void main(String[] args) throws ParseException {
+    private void load() {
+        //stub
+    }
+
+
+    public static void main(String[] args) throws ParseException, IOException {
         new MyAgenda();
     }
 }
