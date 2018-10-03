@@ -14,34 +14,33 @@ public class MyAgenda {
     public MyAgenda() {
         String operation;
         while (true) {
-
-            System.out.println("what would you like to do? [1] add an event [2] find an event [3] see the entire schedules.");
+            MyEvent opEvent = new MyEvent();
+            System.out.println("what would you like to do? [1] add an event [2] delete an event [3] find an event [4] see the entire schedules.");
             System.out.println("If you are done with every operations, enter quit.");
             operation = scanner.nextLine();
             System.out.println("you selected: " + operation);
 
             if (operation.equals("1")) {
-                MyEvent opEvent = new MyEvent();
                 MyEvent result;
-                System.out.println("Please enter the context of event.");
-                String first = scanner.next();
-                System.out.println("Please enter the place of the event.");
-                String second = scanner.next();
-                System.out.println("Please enter the date of the event.");
-                String third = scanner.next();
-                result = AddSchedule(opEvent, first, second, third);
+                result = AddSchedule(opEvent);
                 operationSchedule.add(result);
                 System.out.println("The event has been added.");
             }
+
             else if (operation.equals("2")) {
+                DeleteSchedule();
+            }
+
+            else if (operation.equals("3")) {
                 MyEvent result;
+                System.out.println("Enter the context of the event you're trying to find.");
                 result = FindSchedule();
                 if (result == null) {
                     System.out.println("The event with the context could not be found in the schedule");
                 }
                 else System.out.println(result);
             }
-            else if (operation.equals("3")) {
+            else if (operation.equals("4")) {
                 System.out.println(operationSchedule);}
 
             else if (operation.equals("quit")) {
@@ -55,22 +54,47 @@ public class MyAgenda {
         System.out.println("Thank you for using the system.");
     }
 
+    //REQUIRES: nothing
+    //MODIFIES: this
+    //EFFECTS: adds context, place, and date to myEvent, returns modified myEvent
+    private MyEvent AddSchedule(MyEvent myEvent) {
+        System.out.println("Please enter the context of event.");
+        String first = scanner.next();
+        System.out.println("Please enter the place of the event.");
+        String second = scanner.next();
+        System.out.println("Please enter the date of the event.");
+        String third = scanner.next();
+        scanner.nextLine(); //clears the line,
+        // otherwise the carriage return is taken as the next input
+        // and you get a blank "selected" loop
+        myEvent.SetContext(first);
+        myEvent.SetPlace(second);
+        myEvent.SetDate(third);
+        return myEvent;
+    }
+
 
     //REQUIRES: nothing
     //MODIFIES: this
-    //EFFECTS: adds context, place, and date to myEvent ,returns modified myEvent
-    public MyEvent AddSchedule(MyEvent myEvent, String context, String place, String date) {
-        myEvent.SetContext(context);
-        myEvent.SetPlace(place);
-        myEvent.SetDate(date);
-        return myEvent;
+    //EFFECTS: deletes the requested event from the schedule
+    private void DeleteSchedule() {
+        System.out.println("Please enter the context of event you want to delete.");
+        MyEvent toBeDeleted;
+        toBeDeleted = FindSchedule();
+        if (toBeDeleted == null) {
+            System.out.println("The event with the context could not be found in the schedule");
+        }
+        else {
+            operationSchedule.remove(toBeDeleted);
+            System.out.println("The event has been removed");
+        }
     }
+
 
     //REQUIRES: nothing
     //MODIFIES: nothing
     //EFFECTS: returns the requested event
     private MyEvent FindSchedule() {
-        System.out.println("Enter the context of the event you're trying to find.");
         String one = scanner.next();
         MyEvent theEvent = null;
         for (MyEvent me : operationSchedule) {
