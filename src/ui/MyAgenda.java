@@ -29,48 +29,41 @@ public class MyAgenda {
             System.out.println("you selected: " + operation);
 
             if (operation.equals("1")) {
-                MyEvent opEvent = new MyEvent();
-                MyEvent result;
-                result = AddSchedule(opEvent);
-                operationSchedule.add(result);
-                System.out.println("The event has been added.");
-                save();
-            }
+                AddEvent();}
 
             else if (operation.equals("2")) {
-                DeleteSchedule();
-                save();
-            }
+                DeleteEvent();}
 
             else if (operation.equals("3")) {
-                MyEvent result;
-                System.out.println("Enter the context of the event you're trying to find.");
-                result = FindSchedule();
-                if (result == null) {
-                    System.out.println("The event with the context could not be found in the schedule");
-                }
-                else System.out.println(result);
-            }
+                FindEvent();}
 
             else if (operation.equals("4")) {
-                System.out.println(operationSchedule);
-            }
+                System.out.println(operationSchedule);}
 
             else if (operation.equals("quit")) {
-                break;
-            }
+                break;}
 
-            else {System.out.println("you selected the wrong option. ");}
-
+            else {System.out.println("you selected the wrong option.");}
         }
+        System.out.println("Thank you for using the system.");}
 
-        System.out.println("Thank you for using the system.");
+
+    //REQUIRES: nothing
+    //MODIFIES: this
+    //EFFECTS: adds an event to the schedule
+    private void AddEvent() throws ParseException, IOException {
+        MyEvent opEvent = new MyEvent();
+        MyEvent result;
+        result = MakeEvent(opEvent);
+        operationSchedule.add(result);
+        System.out.println("The event has been added.");
+        save();
     }
 
     //REQUIRES: nothing
     //MODIFIES: this
     //EFFECTS: adds context, place, and date to myEvent, returns modified myEvent
-    private MyEvent AddSchedule(MyEvent myEvent) throws ParseException {
+    private MyEvent MakeEvent(MyEvent myEvent) throws ParseException {
         System.out.println("Please enter the context of event.");
         String first = scanner.next();
         System.out.println("Please enter the place of the event.");
@@ -88,14 +81,13 @@ public class MyAgenda {
         return myEvent;
     }
 
-
     //REQUIRES: nothing
     //MODIFIES: this
-    //EFFECTS: deletes the requested event from the schedule
-    private void DeleteSchedule() {
+    //EFFECTS: deletes the event from the schedule
+    private void DeleteEvent() throws IOException {
         System.out.println("Please enter the context of event you want to delete.");
         MyEvent toBeDeleted;
-        toBeDeleted = FindSchedule();
+        toBeDeleted = FindingEventIntheSchedule();
         if (toBeDeleted == null) {
             System.out.println("The event with the context could not be found in the schedule");
         }
@@ -103,13 +95,25 @@ public class MyAgenda {
             operationSchedule.remove(toBeDeleted);
             System.out.println("The event has been removed");
         }
+        save();
     }
 
+    //REQUIRES: nothing
+    //MODIFIES: nothing
+    //EFFECTS: prints out the event if in the schedule
+    private void FindEvent() {
+        MyEvent result = FindingEventIntheSchedule();
+        System.out.println("Enter the context of the event you're trying to find.");
+        if (result == null) {
+            System.out.println("The event with the context could not be found in the schedule");
+        }
+        else System.out.println(result);
+    }
 
     //REQUIRES: nothing
     //MODIFIES: nothing
     //EFFECTS: returns the requested event
-    private MyEvent FindSchedule() {
+    private MyEvent FindingEventIntheSchedule() {
         String one = scanner.next();
         MyEvent theEvent = null;
         for (MyEvent me : operationSchedule) {
@@ -156,7 +160,6 @@ public class MyAgenda {
         String[] splits = line.split("  ");
         return new ArrayList<>(Arrays.asList(splits));
     }
-
 
 
     public static void main(String[] args) throws ParseException, IOException {
