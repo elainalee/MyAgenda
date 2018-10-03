@@ -10,7 +10,6 @@ public class MyEvent {
     String place;
     Date date;
 
-
     //REQUIRES: nothing
     //MODIFIES: this
     //EFFECTS: takes in strings and turns it into Date

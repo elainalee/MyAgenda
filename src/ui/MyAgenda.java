@@ -6,10 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 //copied from LoggingCalculator
 public class MyAgenda {
@@ -87,7 +84,7 @@ public class MyAgenda {
     private void DeleteEvent() throws IOException {
         System.out.println("Please enter the context of event you want to delete.");
         MyEvent toBeDeleted;
-        toBeDeleted = FindingEventIntheSchedule();
+        toBeDeleted = FindEventByContext();
         if (toBeDeleted == null) {
             System.out.println("The event with the context could not be found in the schedule");
         }
@@ -101,23 +98,73 @@ public class MyAgenda {
     //REQUIRES: nothing
     //MODIFIES: nothing
     //EFFECTS: prints out the event if in the schedule
-    private void FindEvent() {
-        MyEvent result = FindingEventIntheSchedule();
-        System.out.println("Enter the context of the event you're trying to find.");
-        if (result == null) {
-            System.out.println("The event with the context could not be found in the schedule");
+    private void FindEvent() throws ParseException {
+        while (true) {
+        System.out.println("How would you like to find the event? [1] By Context [2] By Place [3] By Date");
+        String operation = scanner.nextLine();
+            if (operation.equals("1") || operation.equals("2") || operation.equals("3")) {
+                if (operation.equals("1")) {
+                    System.out.println("Enter the context of the event you're trying to find.");
+                    MyEvent result = FindEventByContext();
+                    if (result == null) {
+                        System.out.println("The event with the context could not be found in the schedule");
+                    } else System.out.println(result);
+                } else if (operation.equals("2")) {
+                    System.out.println("Enter the place of the event you're trying to find.");
+                    MyEvent result = FindEventByPlace();
+                    if (result == null) {
+                        System.out.println("The event with the place could not be found in the schedule");
+                    } else System.out.println(result);
+                } else if (operation.equals("3")) {
+                    System.out.println("Enter the date of the event you're trying to find, in <yyyy/MM/dd> format.");
+                    MyEvent result = FindEventByDate();
+                    if (result == null) {
+                        System.out.println("The event with the date could not be found in the schedule");
+                    } else System.out.println(result);
+                }
+                break;
+            } else System.out.println("you selected the wrong option.");
+
         }
-        else System.out.println(result);
     }
 
     //REQUIRES: nothing
     //MODIFIES: nothing
     //EFFECTS: returns the requested event
-    private MyEvent FindingEventIntheSchedule() {
-        String one = scanner.next();
+    private MyEvent FindEventByContext() {
+        String context = scanner.next();
         MyEvent theEvent = null;
         for (MyEvent me : operationSchedule) {
-            if (one.equals(me.ContextIs()))
+            if (context.equals(me.ContextIs()))
+                theEvent = me;
+        }
+        scanner.nextLine();
+        return theEvent;
+    }
+
+    //REQUIRES: nothing
+    //MODIFIES: nothing
+    //EFFECTS: returns the requested event
+    private MyEvent FindEventByPlace() {
+        String place = scanner.next();
+        MyEvent theEvent = null;
+        for (MyEvent me : operationSchedule) {
+            if (place.equals(me.PlaceIs()))
+                theEvent = me;
+        }
+        scanner.nextLine();
+        return theEvent;
+    }
+
+    //REQUIRES: nothing
+    //MODIFIES: nothing
+    //EFFECTS: returns the requested event
+    private MyEvent FindEventByDate() throws ParseException {
+        String date = scanner.next();
+        MyEvent theEvent = null;
+        SimpleDateFormat takenInFormat = new SimpleDateFormat("yyyy/MM/dd");
+        for (MyEvent me : operationSchedule) {
+            if (date.equals(takenInFormat.format(me.DateIs())))
                 theEvent = me;
         }
         scanner.nextLine();
