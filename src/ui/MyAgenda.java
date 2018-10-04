@@ -6,10 +6,13 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
 
 //copied from LoggingCalculator
-public class MyAgenda {
+public class MyAgenda implements Model.Agenda{
     ArrayList<MyEvent> operationSchedule = new ArrayList<>();
     Scanner scanner = new Scanner(System.in);
 
@@ -48,7 +51,8 @@ public class MyAgenda {
     //REQUIRES: nothing
     //MODIFIES: this
     //EFFECTS: adds an event to the schedule
-    private void AddEvent() throws ParseException, IOException {
+    @Override
+    public void AddEvent() throws ParseException, IOException {
         MyEvent opEvent = new MyEvent();
         MyEvent result;
         result = MakeEvent(opEvent);
@@ -81,7 +85,8 @@ public class MyAgenda {
     //REQUIRES: nothing
     //MODIFIES: this
     //EFFECTS: deletes the event from the schedule
-    private void DeleteEvent() throws IOException {
+    @Override
+    public void DeleteEvent() throws IOException {
         System.out.println("Please enter the context of event you want to delete.");
         MyEvent toBeDeleted;
         toBeDeleted = FindEventByContext();
@@ -98,7 +103,8 @@ public class MyAgenda {
     //REQUIRES: nothing
     //MODIFIES: nothing
     //EFFECTS: prints out the event if in the schedule
-    private void FindEvent() throws ParseException {
+    @Override
+    public void FindEvent() throws ParseException {
         while (true) {
         System.out.println("How would you like to find the event? [1] By Context [2] By Place [3] By Date");
         String operation = scanner.nextLine();
@@ -175,7 +181,8 @@ public class MyAgenda {
     //MODIFIES: TheSchedule
     //EFFECTS: save the operationSchedule to TheSchedule file
     // Copied from FileReaderWriter
-    private void save() throws IOException {
+    @Override
+    public void save() throws IOException {
         SimpleDateFormat datePrintform = new SimpleDateFormat("'<'E 'at' h a'>' MMM dd, yyyy");
         PrintWriter context = new PrintWriter("TheSchedule","UTF-8");
         for (MyEvent me : operationSchedule) {
@@ -189,7 +196,8 @@ public class MyAgenda {
     //REQUIRES: nothing
     //MODIFIES: TheSchedule
     //EFFECTS: load the TheSchedule file to the operationSchedule
-    private void load() throws IOException, ParseException {
+     @Override
+    public void load() throws IOException, ParseException {
         SimpleDateFormat datePrintform = new SimpleDateFormat("'<'E 'at' h a'>' MMM dd, yyyy");
         List<String> lines = Files.readAllLines(Paths.get("TheSchedule"));
         for (String line : lines) {
@@ -203,7 +211,7 @@ public class MyAgenda {
     }
 
     // Copied from FileReaderWriter
-    public static ArrayList<String> splitOnSpace(String line){
+    private static ArrayList<String> splitOnSpace(String line){
         String[] splits = line.split("  ");
         return new ArrayList<>(Arrays.asList(splits));
     }
