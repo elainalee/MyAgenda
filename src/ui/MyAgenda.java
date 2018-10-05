@@ -1,5 +1,7 @@
 package ui;
 
+import Model.Saveable;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -12,16 +14,21 @@ import java.util.List;
 import java.util.Scanner;
 
 //copied from LoggingCalculator
-public class MyAgenda implements Model.Agenda{
-    ArrayList<MyEvent> operationSchedule = new ArrayList<>();
-    Scanner scanner = new Scanner(System.in);
+public class MyAgenda implements Model.Agenda, Saveable{
+    ArrayList<MyEvent> operationSchedule;
+    Scanner scanner;
+
+    public MyAgenda() {
+        operationSchedule = new ArrayList<>();
+        scanner = new Scanner(System.in);
+    }
 
     //REQUIRES: nothing
     //MODIFIES: nothing
     //EFFECTS: nothing
-    public MyAgenda() throws ParseException, IOException {
+    public void run() throws ParseException, IOException {
         String operation;
-        load();
+        load("TheSchedule");
         while (true) {
             System.out.println("what would you like to do? [1] add an event [2] delete an event [3] find an event [4] see the entire schedules.");
             System.out.println("If you are done with every operations, enter quit.");
@@ -38,12 +45,13 @@ public class MyAgenda implements Model.Agenda{
                 FindEvent();}
 
             else if (operation.equals("4")) {
-                System.out.println(operationSchedule);}
+                PrintSchedule();}
 
             else if (operation.equals("quit")) {
                 break;}
 
             else {System.out.println("you selected the wrong option.");}
+
         }
         System.out.println("Thank you for using the system.");}
 
@@ -58,7 +66,7 @@ public class MyAgenda implements Model.Agenda{
         result = MakeEvent(opEvent);
         operationSchedule.add(result);
         System.out.println("The event has been added.");
-        save();
+        save("TheSchedule");
     }
 
     //REQUIRES: nothing
@@ -97,7 +105,7 @@ public class MyAgenda implements Model.Agenda{
             operationSchedule.remove(toBeDeleted);
             System.out.println("The event has been removed");
         }
-        save();
+        save("TheSchedule");
     }
 
     //REQUIRES: nothing
@@ -140,6 +148,8 @@ public class MyAgenda implements Model.Agenda{
     private MyEvent FindEventByContext() {
         String context = scanner.next();
         MyEvent theEvent = null;
+
+
         for (MyEvent me : operationSchedule) {
             if (context.equals(me.ContextIs()))
                 theEvent = me;
@@ -178,16 +188,24 @@ public class MyAgenda implements Model.Agenda{
     }
 
     //REQUIRES: nothing
+    //MODIFIES: nothing
+    //EFFECTS: returns the requested event
+    @Override
+    public void PrintSchedule() {
+        System.out.println(operationSchedule);
+    }
+
+
+    //REQUIRES: nothing
     //MODIFIES: TheSchedule
     //EFFECTS: save the operationSchedule to TheSchedule file
     // Copied from FileReaderWriter
     @Override
-    public void save() throws IOException {
-        SimpleDateFormat datePrintform = new SimpleDateFormat("'<'E 'at' h a'>' MMM dd, yyyy");
-        PrintWriter context = new PrintWriter("TheSchedule","UTF-8");
+    public void save(String file) throws IOException {
+        PrintWriter context = new PrintWriter(file,"UTF-8");
         for (MyEvent me : operationSchedule) {
             context.println(me.context + "  " +
-                    datePrintform.format(me.date)
+                    me.DatetoStringPrintform(me.date)
                     + "  " + me.place);
         }
         context.close();
@@ -196,10 +214,10 @@ public class MyAgenda implements Model.Agenda{
     //REQUIRES: nothing
     //MODIFIES: TheSchedule
     //EFFECTS: load the TheSchedule file to the operationSchedule
-     @Override
-    public void load() throws IOException, ParseException {
+    @Override
+    public void load(String file) throws IOException, ParseException {
         SimpleDateFormat datePrintform = new SimpleDateFormat("'<'E 'at' h a'>' MMM dd, yyyy");
-        List<String> lines = Files.readAllLines(Paths.get("TheSchedule"));
+        List<String> lines = Files.readAllLines(Paths.get(file));
         for (String line : lines) {
             ArrayList<String> partsOfLine = splitOnSpace(line);
             MyEvent savedEvent = new MyEvent();
@@ -210,6 +228,7 @@ public class MyAgenda implements Model.Agenda{
         }
     }
 
+
     // Copied from FileReaderWriter
     private static ArrayList<String> splitOnSpace(String line){
         String[] splits = line.split("  ");
@@ -218,6 +237,7 @@ public class MyAgenda implements Model.Agenda{
 
 
     public static void main(String[] args) throws ParseException, IOException {
-        new MyAgenda();
+        MyAgenda agenda = new MyAgenda();
+        agenda.run();
     }
 }

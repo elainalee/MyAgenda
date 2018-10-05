@@ -1,10 +1,12 @@
 package ui;
 
+import Model.Event;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class MyEvent {
+public class MyEvent implements Event{
     MyEvent myEvent;
     String context;
     String place;
@@ -16,12 +18,14 @@ public class MyEvent {
     public Date MakeDate(String date, String time) throws ParseException {
         SimpleDateFormat takenInFormat = new SimpleDateFormat("yyyy/MM/dd H");
         Date eventDate = takenInFormat.parse(date+" "+time);
+        return eventDate;
+    }
+
+    public String DatetoStringPrintform (Date date) {
         SimpleDateFormat datePrintform = new SimpleDateFormat("'<'E 'at' h a'>' MMM dd, yyyy");
         // changes eventDate to String in Printform
-        String String_eventDateinPrintform = datePrintform.format(eventDate);
-        // changes eventDate String to eventDate Date
-        Date eventDateinPrintform = datePrintform.parse(String_eventDateinPrintform);
-        return eventDateinPrintform;
+        String String_dateinPrintform = datePrintform.format(date);
+        return String_dateinPrintform;
     }
 
     public void SetContext(String context) {this.context = context;}
