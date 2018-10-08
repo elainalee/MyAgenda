@@ -1,8 +1,8 @@
 package tests;
 
 import org.junit.jupiter.api.Test;
+import ui.MyAgenda;
 import ui.MyEvent;
-import ui.TheirAgenda;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,7 +14,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestMyAgenda {
-    TheirAgenda testAgenda = new TheirAgenda();
+    MyAgenda testAgenda = new MyAgenda();
 
     @Test
     public void testLoad() throws IOException, ParseException {
