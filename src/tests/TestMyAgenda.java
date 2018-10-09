@@ -18,9 +18,9 @@ public class TestMyAgenda {
     MyAgenda testAgenda = new MyAgenda();
 
     @Test
-    public void testLoad() throws IOException, ParseException {
+    public void testLoad_personalSchedule() throws IOException, ParseException {
         SimpleDateFormat datePrintform = new SimpleDateFormat("'<'E 'at' h a'>' MMM dd, yyyy");
-        testAgenda.load("TestInput");
+        testAgenda.load("TestPersonalInput");
         assertEquals("context2", testAgenda.PersonalScheduleIs().get(0).ContextIs());
         assertEquals("context3", testAgenda.PersonalScheduleIs().get(1).ContextIs());
         assertEquals("eating", testAgenda.PersonalScheduleIs().get(2).ContextIs());
@@ -48,8 +48,8 @@ public class TestMyAgenda {
 
         List<String> lines = Files.readAllLines(Paths.get("TestOutput"));
 
-        assertEquals("context1  <Sat at 1 AM> Sep 29, 2001  place1", lines.get(0));
-        assertEquals("context2  <Sun at 2 AM> Sep 29, 2002  place2", lines.get(1));
+        assertEquals("context1 : <Sat at 1 AM> Sep 29, 2001 : place1", lines.get(0));
+        assertEquals("context2 : <Sun at 2 AM> Sep 29, 2002 : place2", lines.get(1));
 
     }
 }

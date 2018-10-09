@@ -616,24 +616,24 @@ public class MyAgenda implements Model.Agenda, Saveable{
         PrintWriter context = new PrintWriter(file,"UTF-8");
         if (file == "MyPersonalSchedule") {
             for (MyPersonalEvent mpe : opPersonalSchedule) {
-                context.println(mpe.context + "  " +
+                context.println(mpe.context + " : " +
                         mpe.DatetoStringPrintform(mpe.date)
-                        + "  " + mpe.place);
+                        + " : " + mpe.place);
             }
         }
         else if (file == "MySchoolSchedule") {
             for (MySchoolEvent mse : opSchoolSchedule) {
-                context.println(mse.context + "  " +
+                context.println(mse.context + " : " +
                         mse.DatetoStringPrintform(mse.date)
-                        + "  " + mse.course);
+                        + " : " + mse.course);
             }
         }
         // for the sake of the test
         else {
             for (MyPersonalEvent mpe : opPersonalSchedule) {
-                context.println(mpe.context + "  " +
+                context.println(mpe.context + " : " +
                         mpe.DatetoStringPrintform(mpe.date)
-                        + "  " + mpe.place);
+                        + " : " + mpe.place);
             }
         }
         context.close();
@@ -684,7 +684,7 @@ public class MyAgenda implements Model.Agenda, Saveable{
 
     // Copied from FileReaderWriter
     private static ArrayList<String> splitOnSpace(String line){
-        String[] splits = line.split("  ");
+        String[] splits = line.split(" : ");
         return new ArrayList<>(Arrays.asList(splits));
     }
 
