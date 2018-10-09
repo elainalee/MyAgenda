@@ -12,11 +12,13 @@ import java.util.*;
 
 //copied from LoggingCalculator
 public class MyAgenda implements Model.Agenda, Saveable{
-    ArrayList<MyEvent> operationSchedule;
+    ArrayList<MyPersonalEvent> opPersonalSchedule;
+    ArrayList<MySchoolEvent> opSchoolSchedule;
     Scanner scanner;
 
     public MyAgenda() {
-        operationSchedule = new ArrayList<>();
+        opPersonalSchedule = new ArrayList<>();
+        opSchoolSchedule = new ArrayList<>();
         scanner = new Scanner(System.in);
     }
 
@@ -25,12 +27,12 @@ public class MyAgenda implements Model.Agenda, Saveable{
     //EFFECTS: nothing
     public void run() throws ParseException, IOException {
         String operation;
-        load("TheSchedule");
+        load("MyPersonalSchedule");
+        load("MySchoolSchedule");
         while (true) {
-            System.out.println("what would you like to do? [1] add an event [2] delete an event [3] find an event [4] see the entire schedules.");
+            System.out.println("what would you like to do? [1] add an event [2] delete an event [3] find an event [4] see the schedule.");
             System.out.println("If you are done with every operations, enter quit.");
-            operation = scanner.nextLine();
-            System.out.println("you selected: " + operation);
+            operation = scanner.next();
 
             if (operation.equals("1")) {
                 AddEvent();}
@@ -47,29 +49,45 @@ public class MyAgenda implements Model.Agenda, Saveable{
             else if (operation.equals("quit")) {
                 break;}
 
-            else {System.out.println("you selected the wrong option.");}
+            else {System.out.println("You selected the wrong option.");}
 
         }
         System.out.println("Thank you for using the system.");}
 
 
-    //REQUIRES: nothing
-    //MODIFIES: this
-    //EFFECTS: adds an event to the schedule
     @Override
-    public void AddEvent() throws ParseException, IOException {
-        MyEvent opEvent = new MyEvent();
-        MyEvent result;
-        result = MakeEvent(opEvent);
-        operationSchedule.add(result);
-        System.out.println("The event has been added.");
-        save("TheSchedule");
+    public void AddEvent() throws IOException, ParseException {
+        String whichEvent;
+        while (true) {
+            System.out.println("Which event would you like to add? [1] personal event [2] school event");
+             whichEvent = scanner.next();
+
+             if (whichEvent.equals("1")) {
+                 AddPersonalEvent();
+                 break;}
+             else if (whichEvent.equals("2")) {
+                 AddSchoolEvent();
+                 break;}
+             else System.out.print("You selected the wrong option. ");
+        }
     }
 
     //REQUIRES: nothing
     //MODIFIES: this
-    //EFFECTS: adds context, place, and date to myEvent, returns modified myEvent
-    private MyEvent MakeEvent(MyEvent myEvent) throws ParseException {
+    //EFFECTS: adds an event to MyPersonalSchedule
+    public void AddPersonalEvent() throws ParseException, IOException {
+        MyPersonalEvent opEvent = new MyPersonalEvent();
+        MyPersonalEvent result;
+        result = MakePersonalEvent(opEvent);
+        opPersonalSchedule.add(result);
+        System.out.println("The event has been added.");
+        save("MyPersonalSchedule");
+    }
+
+    //REQUIRES: nothing
+    //MODIFIES: this
+    //EFFECTS: adds context, place, and date to myEvent, returns modified myPersonalEvent
+    private MyPersonalEvent MakePersonalEvent(MyPersonalEvent myPersonalEvent) throws ParseException {
         System.out.println("Please enter the context of event.");
         String first = scanner.next();
         System.out.println("Please enter the place of the event.");
@@ -79,10 +97,41 @@ public class MyAgenda implements Model.Agenda, Saveable{
         scanner.nextLine(); //clears the line,
         // otherwise the carriage return is taken as the next input
         // and you get a blank "selected" loop
-        myEvent.SetContext(first);
-        myEvent.SetPlace(second);
-        myEvent.SetDate(myEvent.MakeDate(third, four));
-        return myEvent;
+        myPersonalEvent.SetContext(first);
+        myPersonalEvent.SetPlace(second);
+        myPersonalEvent.SetDate(myPersonalEvent.MakeDate(third, four));
+        return myPersonalEvent;
+    }
+
+    //REQUIRES: nothing
+    //MODIFIES: this
+    //EFFECTS: adds an event to MySchoolSchedule
+    public void AddSchoolEvent() throws ParseException, IOException {
+        MySchoolEvent opEvent = new MySchoolEvent();
+        MySchoolEvent result;
+        result = MakeSchoolEvent(opEvent);
+        opSchoolSchedule.add(result);
+        System.out.println("The event has been added.");
+        save("MySchoolSchedule");
+    }
+
+    //REQUIRES: nothing
+    //MODIFIES: this
+    //EFFECTS: adds context, place, and date to myEvent, returns modified myEvent
+    private MySchoolEvent MakeSchoolEvent(MySchoolEvent mySchoolEvent) throws ParseException {
+        System.out.println("Please enter the context of event.");
+        String first = scanner.next();
+        System.out.println("Please enter which course that "+first+" is for.");
+        String second = scanner.next();
+        String third = getDate();
+        String four = getTime();
+        scanner.nextLine(); //clears the line,
+        // otherwise the carriage return is taken as the next input
+        // and you get a blank "selected" loop
+        mySchoolEvent.SetContext(first);
+        mySchoolEvent.SetCourse(second);
+        mySchoolEvent.SetDate(mySchoolEvent.MakeDate(third, four));
+        return mySchoolEvent;
     }
 
     //REQUIRES: nothing
@@ -146,13 +195,31 @@ public class MyAgenda implements Model.Agenda, Saveable{
     //EFFECTS: deletes the event from the schedule
     @Override
     public void DeleteEvent() throws IOException {
+        String whichEvent;
+        while (true) {
+            System.out.println("Which event would you like to delete? [1] personal event [2] school event");
+            whichEvent = scanner.next();
+
+            if (whichEvent.equals("1")) {
+                DeletePersonalEvent();
+                break;
+            } else if (whichEvent.equals("2")) {
+                DeleteSchoolEvent();
+                break;
+            } else System.out.print("You selected the wrong option. ");
+        }
+    }
+
+
+
+    public void DeletePersonalEvent() throws IOException {
         System.out.println("Please enter the context of event you want to delete.");
-        ArrayList<MyEvent> toBeDeleted;
-        toBeDeleted = FindEventByContext();
+        ArrayList<MyPersonalEvent> toBeDeleted;
+        toBeDeleted = FindPersonalEventByContext();
         if (toBeDeleted.size() == 0) {
             System.out.println("The event with the context could not be found in the schedule");
         } else if (toBeDeleted.size() == 1) {
-            operationSchedule.remove(toBeDeleted.get(0));
+            opPersonalSchedule.remove(toBeDeleted.get(0));
             System.out.println("The event has been removed");
         } else {
             System.out.println("There are " + toBeDeleted.size() + " number of events with the following context.");
@@ -160,7 +227,7 @@ public class MyAgenda implements Model.Agenda, Saveable{
             do {
                 System.out.println("Which event would you like to delete?");
                 Integer tbdNumber = 1;
-                for (MyEvent tbd : toBeDeleted) {
+                for (MyPersonalEvent tbd : toBeDeleted) {
                     System.out.print("[" + tbdNumber + "] ");
                     if (tbdNumber < toBeDeleted.size()) {
                         System.out.print(tbd);
@@ -169,16 +236,53 @@ public class MyAgenda implements Model.Agenda, Saveable{
                         System.out.println(tbd);
                     tbdNumber = tbdNumber + 1;
                 }
-                String deleteWhich = scanner.nextLine();
+                String deleteWhich = scanner.next();
                 try {
-                    operationSchedule.remove(toBeDeleted.get(Integer.parseInt(deleteWhich) - 1));
+                    opPersonalSchedule.remove(toBeDeleted.get(Integer.parseInt(deleteWhich) - 1));
                     System.out.println("The event has been removed");
                     x = false;
                 } catch (Exception e) {
                     System.out.println("You selected the wrong option.");
                 }
             } while (x);
-            save("TheSchedule");
+            save("MyPersonalSchedule");
+        }
+    }
+
+    public void DeleteSchoolEvent() throws IOException {
+        System.out.println("Please enter the context of event you want to delete.");
+        ArrayList<MySchoolEvent> toBeDeleted;
+        toBeDeleted = FindSchoolEventByContext();
+        if (toBeDeleted.size() == 0) {
+            System.out.println("The event with the context could not be found in the schedule");
+        } else if (toBeDeleted.size() == 1) {
+            opSchoolSchedule.remove(toBeDeleted.get(0));
+            System.out.println("The event has been removed");
+        } else {
+            System.out.println("There are " + toBeDeleted.size() + " number of events with the following context.");
+            boolean x = true;
+            do {
+                System.out.println("Which event would you like to delete?");
+                Integer tbdNumber = 1;
+                for (MySchoolEvent tbd : toBeDeleted) {
+                    System.out.print("[" + tbdNumber + "] ");
+                    if (tbdNumber < toBeDeleted.size()) {
+                        System.out.print(tbd);
+                        System.out.print(", ");
+                    } else if (tbdNumber == toBeDeleted.size())
+                        System.out.println(tbd);
+                    tbdNumber = tbdNumber + 1;
+                }
+                String deleteWhich = scanner.next();
+                try {
+                    opSchoolSchedule.remove(toBeDeleted.get(Integer.parseInt(deleteWhich) - 1));
+                    System.out.println("The event has been removed");
+                    x = false;
+                } catch (Exception e) {
+                    System.out.println("You selected the wrong option.");
+                }
+            } while (x);
+            save("MyPersonalSchedule");
         }
     }
 
@@ -188,10 +292,27 @@ public class MyAgenda implements Model.Agenda, Saveable{
     //EFFECTS: prints out the event if in the schedule
     @Override
     public void FindEvent() throws ParseException {
+        String operation;
         while (true) {
-        System.out.println("How would you like to find the event? [1] By Context [2] By Place [3] By Date");
-        String operation = scanner.nextLine();
+            System.out.println("Which event do you want to find?");
+            System.out.println("[1] Any events [2] personal events [3] school events");
+            operation = scanner.next();
             if (operation.equals("1") || operation.equals("2") || operation.equals("3")) {
+                if (operation.equals("1")) FindAnyEvent();
+                else if (operation.equals("2")) FindPersonalEvent();
+                else if (operation.equals("3")) FindSchoolEvent();
+                break;
+            } else System.out.println("you selected the wrong option.");
+        }
+    }
+
+    public void FindAnyEvent() throws ParseException {
+        String operation;
+        while (true) {
+            System.out.print("How do you want to find the event? ");
+            System.out.println("[1] By context [2] By date");
+            operation = scanner.next();
+            if (operation.equals("1") || operation.equals("2")) {
                 if (operation.equals("1")) {
                     System.out.println("Enter the context of the event you're trying to find.");
                     ArrayList<MyEvent> result = FindEventByContext();
@@ -201,19 +322,9 @@ public class MyAgenda implements Model.Agenda, Saveable{
                         System.out.println(result.get(0));
                     } else {
                         System.out.println("There are " + result.size() + " number of events with the following context.");
-                        System.out.println(result);}
-                } else if (operation.equals("2")) {
-                    System.out.println("Enter the place of the event you're trying to find.");
-                    ArrayList<MyEvent> result = FindEventByPlace();
-                    if (result.size() == 0) {
-                        System.out.println("The event with the place could not be found in the schedule");
-                    } else if (result.size() == 1) {
-                        System.out.println(result.get(0));
-                    } else {
-                        System.out.println("There are " + result.size() + " number of events with the following context.");
                         System.out.println(result);
                     }
-                } else if (operation.equals("3")) {
+                } else if (operation.equals("2")) {
                     System.out.println("Enter the date of the event you're trying to find, in <yyyy/MM/dd> format.");
                     ArrayList<MyEvent> result = FindEventByDate();
                     if (result.size() == 0) {
@@ -221,12 +332,106 @@ public class MyAgenda implements Model.Agenda, Saveable{
                     } else if (result.size() == 1) {
                         System.out.println(result.get(0));
                     } else {
+                        System.out.println("There are " + result.size() + " number of events with the following date.");
+                        System.out.println(result);
+                    }
+                }
+                break;
+            } else System.out.println("you selected the wrong option.");
+        }
+    }
+
+    public void FindPersonalEvent () throws ParseException {
+        String operation;
+        while (true) {
+            System.out.print("How do you want to find the event? ");
+            System.out.println("[1] By context [2] By date [3] By place");
+            operation = scanner.next();
+            if (operation.equals("1") || operation.equals("2") || operation.equals("3")) {
+                if (operation.equals("1")) {
+                    System.out.println("Enter the context of the event you're trying to find.");
+                    ArrayList<MyPersonalEvent> result = FindPersonalEventByContext();
+                    if (result.size() == 0) {
+                        System.out.println("The event with the context could not be found in the schedule.");
+                    } else if (result.size() == 1) {
+                        System.out.println(result.get(0));
+                    } else {
                         System.out.println("There are " + result.size() + " number of events with the following context.");
                         System.out.println(result);
                     }
-                } break;
+                } else if (operation.equals("2")) {
+                    System.out.println("Enter the date of the event you're trying to find, in <yyyy/MM/dd> format.");
+                    ArrayList<MyPersonalEvent> result = FindPersonalEventByDate();
+                    if (result.size() == 0) {
+                        System.out.println("The event with the date could not be found in the schedule");
+                    } else if (result.size() == 1) {
+                        System.out.println(result.get(0));
+                    } else {
+                        System.out.println("There are " + result.size() + " number of events with the following date.");
+                        System.out.println(result);
+                    }
+                }
+                if (operation.equals("3")) {
+                    System.out.println("Enter the place of the event you're trying to find.");
+                    ArrayList<MyPersonalEvent> result = FindPersonalEventByPlace();
+                    if (result.size() == 0) {
+                        System.out.println("The event with the place could not be found in the schedule.");
+                    } else if (result.size() == 1) {
+                        System.out.println(result.get(0));
+                    } else {
+                        System.out.println("There are " + result.size() + " number of events with the following place.");
+                        System.out.println(result);
+                    }
+                }
+                break;
             } else System.out.println("you selected the wrong option.");
+        }
+    }
 
+    public void FindSchoolEvent () throws ParseException {
+        String operation;
+        while (true) {
+            System.out.print("How do you want to find the event? ");
+            System.out.println("[1] By context [2] By date [3] By course");
+            operation = scanner.next();
+            if (operation.equals("1") || operation.equals("2") || operation.equals("3")) {
+                if (operation.equals("1")) {
+                    System.out.println("Enter the context of the event you're trying to find.");
+                    ArrayList<MySchoolEvent> result = FindSchoolEventByContext();
+                    if (result.size() == 0) {
+                        System.out.println("The event with the context could not be found in the schedule.");
+                    } else if (result.size() == 1) {
+                        System.out.println(result.get(0));
+                    } else {
+                        System.out.println("There are " + result.size() + " number of events with the following context.");
+                        System.out.println(result);
+                    }
+                } else if (operation.equals("2")) {
+                    System.out.println("Enter the date of the event you're trying to find, in <yyyy/MM/dd> format.");
+                    ArrayList<MySchoolEvent> result = FindSchoolEventByDate();
+                    if (result.size() == 0) {
+                        System.out.println("The event with the date could not be found in the schedule");
+                    } else if (result.size() == 1) {
+                        System.out.println(result.get(0));
+                    } else {
+                        System.out.println("There are " + result.size() + " number of events with the following date.");
+                        System.out.println(result);
+                    }
+                }
+                if (operation.equals("3")) {
+                    System.out.println("Enter the course of the event you are trying to find.");
+                    ArrayList<MySchoolEvent> result = FindSchoolEventByCourse();
+                    if (result.size() == 0) {
+                        System.out.println("The event with the course could not be found in the schedule.");
+                    } else if (result.size() == 1) {
+                        System.out.println(result.get(0));
+                    } else {
+                        System.out.println("There are " + result.size() + " number of events with the following course.");
+                        System.out.println(result);
+                    }
+                }
+                break;
+            } else System.out.println("you selected the wrong option.");
         }
     }
 
@@ -236,7 +441,11 @@ public class MyAgenda implements Model.Agenda, Saveable{
     private ArrayList<MyEvent> FindEventByContext() {
         String context = scanner.next();
         ArrayList<MyEvent> theEvents = new ArrayList<>();
-        for (MyEvent me : operationSchedule) {
+        for (MyEvent me : opPersonalSchedule) {
+            if (context.equals(me.ContextIs()))
+                theEvents.add(me);
+        }
+        for (MyEvent me : opSchoolSchedule) {
             if (context.equals(me.ContextIs()))
                 theEvents.add(me);
         }
@@ -247,15 +456,29 @@ public class MyAgenda implements Model.Agenda, Saveable{
     //REQUIRES: nothing
     //MODIFIES: nothing
     //EFFECTS: returns the requested event
-    private ArrayList<MyEvent> FindEventByPlace() {
-        String place = scanner.next();
-        ArrayList<MyEvent> theEvents = new ArrayList<>();
-        for (MyEvent me : operationSchedule) {
-            if (place.equals(me.PlaceIs()))
-                theEvents.add(me);
+    private ArrayList<MyPersonalEvent> FindPersonalEventByContext() {
+        String context = scanner.next();
+        ArrayList<MyPersonalEvent> thePersonalEvents = new ArrayList<>();
+        for (MyPersonalEvent mpe : opPersonalSchedule) {
+            if (context.equals(mpe.ContextIs()))
+                thePersonalEvents.add(mpe);
         }
         scanner.nextLine();
-        return theEvents;
+        return thePersonalEvents;
+    }
+
+    //REQUIRES: nothing
+    //MODIFIES: nothing
+    //EFFECTS: returns the requested event
+    private ArrayList<MySchoolEvent> FindSchoolEventByContext() {
+        String context = scanner.next();
+        ArrayList<MySchoolEvent> theSchoolEvents = new ArrayList<>();
+        for (MySchoolEvent mse : opSchoolSchedule) {
+            if (context.equals(mse.ContextIs()))
+                theSchoolEvents.add(mse);
+        }
+        scanner.nextLine();
+        return theSchoolEvents;
     }
 
     //REQUIRES: nothing
@@ -265,7 +488,11 @@ public class MyAgenda implements Model.Agenda, Saveable{
         String date = scanner.next();
         ArrayList<MyEvent> theEvents = new ArrayList<>();
         SimpleDateFormat takenInFormat = new SimpleDateFormat("yyyy/MM/dd");
-        for (MyEvent me : operationSchedule) {
+        for (MyEvent me : opPersonalSchedule) {
+            if (date.equals(takenInFormat.format(me.DateIs())))
+                theEvents.add(me);
+        }
+        for (MyEvent me : opSchoolSchedule) {
             if (date.equals(takenInFormat.format(me.DateIs())))
                 theEvents.add(me);
         }
@@ -275,48 +502,182 @@ public class MyAgenda implements Model.Agenda, Saveable{
 
     //REQUIRES: nothing
     //MODIFIES: nothing
-    //EFFECTS: prints out the operationSchedule
-    @Override
-    public void PrintSchedule() {
-        System.out.println(operationSchedule);
+    //EFFECTS: returns the requested event
+    private ArrayList<MyPersonalEvent> FindPersonalEventByDate() throws ParseException {
+        String date = scanner.next();
+        ArrayList<MyPersonalEvent> thePersonalEvents = new ArrayList<>();
+        SimpleDateFormat takenInFormat = new SimpleDateFormat("yyyy/MM/dd");
+        for (MyPersonalEvent mpe : opPersonalSchedule) {
+            if (date.equals(takenInFormat.format(mpe.DateIs())))
+                thePersonalEvents.add(mpe);
+        }
+        scanner.nextLine();
+        return thePersonalEvents;
     }
 
     //REQUIRES: nothing
     //MODIFIES: nothing
-    //EFFECTS: returns the operationSchedule
-    public ArrayList<MyEvent> ScheduleIs() {
+    //EFFECTS: returns the requested event
+    private ArrayList<MySchoolEvent> FindSchoolEventByDate() throws ParseException {
+        String date = scanner.next();
+        ArrayList<MySchoolEvent> theSchoolEvents = new ArrayList<>();
+        SimpleDateFormat takenInFormat = new SimpleDateFormat("yyyy/MM/dd");
+        for (MySchoolEvent mse : opSchoolSchedule) {
+            if (date.equals(takenInFormat.format(mse.DateIs())))
+                theSchoolEvents.add(mse);
+        }
+        scanner.nextLine();
+        return theSchoolEvents;
+    }
+
+    //REQUIRES: nothing
+    //MODIFIES: nothing
+    //EFFECTS: returns the requested event
+    private ArrayList<MyPersonalEvent> FindPersonalEventByPlace() {
+        String place = scanner.next();
+        ArrayList<MyPersonalEvent> thePersonalEvents = new ArrayList<>();
+        for (MyPersonalEvent me : opPersonalSchedule) {
+            if (place.equals(me.PlaceIs()))
+                thePersonalEvents.add(me);
+        }
+        scanner.nextLine();
+        return thePersonalEvents;
+    }
+
+    //REQUIRES: nothing
+    //MODIFIES: nothing
+    //EFFECTS: returns the requested event
+    private ArrayList<MySchoolEvent> FindSchoolEventByCourse() {
+        String place = scanner.next();
+        ArrayList<MySchoolEvent> theSchoolEvents = new ArrayList<>();
+        for (MySchoolEvent mse : opSchoolSchedule) {
+            if (place.equals(mse.CourseIs()))
+                theSchoolEvents.add(mse);
+        }
+        scanner.nextLine();
+        return theSchoolEvents;
+    }
+
+    //REQUIRES: nothing
+    //MODIFIES: nothing
+    //EFFECTS: prints out the operationSchedule
+    @Override
+    public void PrintSchedule() {
+        while (true) {
+            System.out.print("Which schedule do you want to print out? ");
+            System.out.println("[1] entire schedule [2] personal schedule [3] school schedule");
+            String operation = scanner.next();
+            if (operation.equals("1") || operation.equals("2") || operation.equals("3")) {
+                if (operation.equals("1")) {
+                    System.out.println(EntireScheduleIs());
+                }
+                else if (operation.equals("2")) {
+                    System.out.println(opPersonalSchedule);
+                }
+                else if (operation.equals("3")) {
+                    System.out.println(opSchoolSchedule);
+                }
+                break;
+            }
+            else System.out.println("you selected the wrong option.");
+        }
+    }
+
+    //REQUIRES: nothing
+    //MODIFIES: nothing
+    //EFFECTS: returns the entire schedule
+    public ArrayList<MyEvent> EntireScheduleIs() {
+        ArrayList<MyEvent> operationSchedule = new ArrayList<>();
+        operationSchedule.addAll(opPersonalSchedule);
+        operationSchedule.addAll(opSchoolSchedule);
         return operationSchedule;
     }
 
     //REQUIRES: nothing
-    //MODIFIES: TheSchedule
-    //EFFECTS: save the operationSchedule to TheSchedule file
+    //MODIFIES: nothing
+    //EFFECTS: returns the personal schedule
+    public ArrayList<MyPersonalEvent> PersonalScheduleIs() {
+        return opPersonalSchedule;
+    }
+
+    //REQUIRES: nothing
+    //MODIFIES: nothing
+    //EFFECTS: returns the personal schedule
+    public ArrayList<MySchoolEvent> SchoolScheduleIs() {
+        return opSchoolSchedule;
+    }
+
+    //REQUIRES: nothing
+    //MODIFIES: MyPersonalSchedule
+    //EFFECTS: save the operationSchedule to MyPersonalSchedule file
     // Copied from FileReaderWriter
     @Override
     public void save(String file) throws IOException {
         PrintWriter context = new PrintWriter(file,"UTF-8");
-        for (MyEvent me : operationSchedule) {
-            context.println(me.context + "  " +
-                    me.DatetoStringPrintform(me.date)
-                    + "  " + me.place);
+        if (file == "MyPersonalSchedule") {
+            for (MyPersonalEvent mpe : opPersonalSchedule) {
+                context.println(mpe.context + "  " +
+                        mpe.DatetoStringPrintform(mpe.date)
+                        + "  " + mpe.place);
+            }
+        }
+        else if (file == "MySchoolSchedule") {
+            for (MySchoolEvent mse : opSchoolSchedule) {
+                context.println(mse.context + "  " +
+                        mse.DatetoStringPrintform(mse.date)
+                        + "  " + mse.course);
+            }
+        }
+        // for the sake of the test
+        else {
+            for (MyPersonalEvent mpe : opPersonalSchedule) {
+                context.println(mpe.context + "  " +
+                        mpe.DatetoStringPrintform(mpe.date)
+                        + "  " + mpe.place);
+            }
         }
         context.close();
     }
 
     //REQUIRES: nothing
-    //MODIFIES: TheSchedule
-    //EFFECTS: load the TheSchedule file to the operationSchedule
-    @Override
+    //MODIFIES: MyPersonalSchedule
+    //EFFECTS: load the MyPersonalSchedule file to the operationSchedule
     public void load(String file) throws IOException, ParseException {
-        SimpleDateFormat datePrintform = new SimpleDateFormat("'<'E 'at' h a'>' MMM dd, yyyy");
-        List<String> lines = Files.readAllLines(Paths.get(file));
-        for (String line : lines) {
-            ArrayList<String> partsOfLine = splitOnSpace(line);
-            MyEvent savedEvent = new MyEvent();
-            savedEvent.SetContext(partsOfLine.get(0));
-            savedEvent.SetDate(datePrintform.parse(partsOfLine.get(1)));
-            savedEvent.SetPlace(partsOfLine.get(2));
-            operationSchedule.add(savedEvent);
+        if (file == "MyPersonalSchedule") {
+            SimpleDateFormat datePrintform = new SimpleDateFormat("'<'E 'at' h a'>' MMM dd, yyyy");
+            List<String> lines = Files.readAllLines(Paths.get(file));
+            for (String line : lines) {
+                ArrayList<String> partsOfLine = splitOnSpace(line);
+                MyPersonalEvent savedEvent = new MyPersonalEvent();
+                savedEvent.SetContext(partsOfLine.get(0));
+                savedEvent.SetDate(datePrintform.parse(partsOfLine.get(1)));
+                savedEvent.SetPlace(partsOfLine.get(2));
+                opPersonalSchedule.add(savedEvent);
+            }
+        } else if (file == "MySchoolSchedule") {
+            SimpleDateFormat datePrintform = new SimpleDateFormat("'<'E 'at' h a'>' MMM dd, yyyy");
+            List<String> lines = Files.readAllLines(Paths.get(file));
+            for (String line : lines) {
+                ArrayList<String> partsOfLine = splitOnSpace(line);
+                MySchoolEvent savedEvent = new MySchoolEvent();
+                savedEvent.SetContext(partsOfLine.get(0));
+                savedEvent.SetDate(datePrintform.parse(partsOfLine.get(1)));
+                savedEvent.SetCourse(partsOfLine.get(2));
+                opSchoolSchedule.add(savedEvent);
+            }
+        }
+        // for the sake of the test
+        else {
+            SimpleDateFormat datePrintform = new SimpleDateFormat("'<'E 'at' h a'>' MMM dd, yyyy");
+            List<String> lines = Files.readAllLines(Paths.get(file));
+            for (String line : lines) {
+                ArrayList<String> partsOfLine = splitOnSpace(line);
+                MyPersonalEvent savedEvent = new MyPersonalEvent();
+                savedEvent.SetContext(partsOfLine.get(0));
+                savedEvent.SetDate(datePrintform.parse(partsOfLine.get(1)));
+                savedEvent.SetPlace(partsOfLine.get(2));
+                opPersonalSchedule.add(savedEvent);
+            }
         }
     }
 

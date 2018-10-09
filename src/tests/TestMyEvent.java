@@ -1,7 +1,7 @@
 package tests;
 
 import org.junit.jupiter.api.Test;
-import ui.MyEvent;
+import ui.MyPersonalEvent;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,8 +9,10 @@ import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+
+
 public class TestMyEvent {
-    MyEvent testEvent = new MyEvent();
+    MyPersonalEvent testEvent = new MyPersonalEvent();
 
 
     // test if the method takes in the string

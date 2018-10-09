@@ -6,10 +6,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class MyEvent implements Event{
+public abstract class MyEvent implements Event{
     MyEvent myEvent;
     String context;
-    String place;
     Date date;
 
     //REQUIRES: nothing
@@ -29,20 +28,13 @@ public class MyEvent implements Event{
     }
 
     public void SetContext(String context) {this.context = context;}
-    public void SetPlace(String place) {this.place = place;}
+
     public void SetDate(Date date) {this.date = date;}
 
+    public String ContextIs() {return context;}
 
-    public String ContextIs() {
-        return context;
-    }
-    public String PlaceIs() {
-        return place;
-    }
-    public Date DateIs() { return date; }
+    public Date DateIs() {return date;}
 
-    public String toString() {
-        SimpleDateFormat datePrintform = new SimpleDateFormat("'<'E 'at' h a'>' MMM dd, yyyy");
-        return datePrintform.format(date) + ": " + context + " at " + place;
-    }
+    public abstract String toString();
+
 }
