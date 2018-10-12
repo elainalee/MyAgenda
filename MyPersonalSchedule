@@ -1,8 +1,7 @@
-context3  <Tue at 8 AM> Sep 29, 1998  place3
-eating  <Wed at 4 AM> Sep 29, 1999  home
-hi  <Wed at 8 AM> Sep 29, 1999  place
-testct  <Sat at 4 AM> Sep 29, 2018  testpl
-disfjk  <Mon at 8 AM> Jun 07, 2021  sdfklj
-hiii  <Thu at 9 AM> Sep 09, 2010  home?
-dk'sl  <Wed at 11 PM> Dec 29, 1999  sdlkf
-testContext_p  <Sat at 1 AM> Sep 09, 2000  testPlace_p
+eating : <Wed at 4 AM> Sep 29, 1999 : home
+hi : <Wed at 8 AM> Sep 29, 1999 : place
+testct : <Sat at 4 AM> Sep 29, 2018 : testpl
+disfjk : <Mon at 8 AM> Jun 07, 2021 : sdfklj
+hiii : <Thu at 9 AM> Sep 09, 2010 : home?
+dk'sl : <Wed at 11 PM> Dec 29, 1999 : sdlkf
+testContext_p : <Sat at 1 AM> Sep 09, 2000 : testPlace_p
