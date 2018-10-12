@@ -245,8 +245,8 @@ public class MyAgenda implements Model.Agenda, Saveable{
                     System.out.println("You selected the wrong option.");
                 }
             } while (x);
-            save("MyPersonalSchedule");
         }
+        save("MyPersonalSchedule");
     }
 
     public void DeleteSchoolEvent() throws IOException {
@@ -282,8 +282,8 @@ public class MyAgenda implements Model.Agenda, Saveable{
                     System.out.println("You selected the wrong option.");
                 }
             } while (x);
-            save("MyPersonalSchedule");
         }
+        save("MyPersonalSchedule");
     }
 
 
