@@ -9,9 +9,10 @@ public class MySchoolEvent extends MyEvent {
 
     public String CourseIs() {return course;}
 
-    @Override
+
     public String toString() {
         SimpleDateFormat datePrintform = new SimpleDateFormat("'<'E 'at' h a'>' MMM dd, yyyy");
         return (course + " " + context + " is due on " + datePrintform.format(date));
     }
+
 }

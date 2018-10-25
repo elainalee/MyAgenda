@@ -1,6 +1,8 @@
 package ui;
 
+import Model.Loadable;
 import Model.Saveable;
+import exceptions.AlreadyExisting;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,10 +13,12 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 //copied from LoggingCalculator
-public class MyAgenda implements Model.Agenda, Saveable{
+public class MyAgenda implements Model.Agenda, Saveable, Loadable{
     ArrayList<MyPersonalEvent> opPersonalSchedule;
     ArrayList<MySchoolEvent> opSchoolSchedule;
     Scanner scanner;
+    SimpleDateFormat takenInFormat = new SimpleDateFormat("yyyy/MM/dd");
+    SimpleDateFormat datePrintform = new SimpleDateFormat("'<'E 'at' h a'>' MMM dd, yyyy");
 
     public MyAgenda() {
         opPersonalSchedule = new ArrayList<>();
@@ -35,7 +39,11 @@ public class MyAgenda implements Model.Agenda, Saveable{
             operation = scanner.next();
 
             if (operation.equals("1")) {
-                AddEvent();}
+                try {AddEvent();}
+                catch (AlreadyExisting ae) {
+                     System.out.println("The following event already exists.");
+                }
+            }
 
             else if (operation.equals("2")) {
                 DeleteEvent();}
@@ -56,7 +64,7 @@ public class MyAgenda implements Model.Agenda, Saveable{
 
 
     @Override
-    public void AddEvent() throws IOException, ParseException {
+    public void AddEvent() throws IOException, ParseException, AlreadyExisting {
         String whichEvent;
         while (true) {
             System.out.println("Which event would you like to add? [1] personal event [2] school event");
@@ -75,7 +83,7 @@ public class MyAgenda implements Model.Agenda, Saveable{
     //REQUIRES: nothing
     //MODIFIES: this
     //EFFECTS: adds an event to MyPersonalSchedule
-    public void AddPersonalEvent() throws ParseException, IOException {
+    public void AddPersonalEvent() throws ParseException, IOException, AlreadyExisting {
         MyPersonalEvent opEvent = new MyPersonalEvent();
         MyPersonalEvent result;
         result = MakePersonalEvent(opEvent);
@@ -87,7 +95,7 @@ public class MyAgenda implements Model.Agenda, Saveable{
     //REQUIRES: nothing
     //MODIFIES: this
     //EFFECTS: adds context, place, and date to myEvent, returns modified myPersonalEvent
-    private MyPersonalEvent MakePersonalEvent(MyPersonalEvent myPersonalEvent) throws ParseException {
+    private MyPersonalEvent MakePersonalEvent(MyPersonalEvent myPersonalEvent) throws ParseException, AlreadyExisting {
         System.out.println("Please enter the context of event.");
         String first = scanner.next();
         System.out.println("Please enter the place of the event.");
@@ -97,6 +105,12 @@ public class MyAgenda implements Model.Agenda, Saveable{
         scanner.nextLine(); //clears the line,
         // otherwise the carriage return is taken as the next input
         // and you get a blank "selected" loop
+        for (MyPersonalEvent mpe : opPersonalSchedule) {
+            if ((first.equals(mpe.context)) && (second.equals(mpe.place)
+                    && (myPersonalEvent.MakeDate(third, four)).equals(mpe.date))) {
+                throw new AlreadyExisting();
+            }
+        }
         myPersonalEvent.SetContext(first);
         myPersonalEvent.SetPlace(second);
         myPersonalEvent.SetDate(myPersonalEvent.MakeDate(third, four));
@@ -106,7 +120,7 @@ public class MyAgenda implements Model.Agenda, Saveable{
     //REQUIRES: nothing
     //MODIFIES: this
     //EFFECTS: adds an event to MySchoolSchedule
-    public void AddSchoolEvent() throws ParseException, IOException {
+    public void AddSchoolEvent() throws ParseException, IOException, AlreadyExisting {
         MySchoolEvent opEvent = new MySchoolEvent();
         MySchoolEvent result;
         result = MakeSchoolEvent(opEvent);
@@ -118,7 +132,7 @@ public class MyAgenda implements Model.Agenda, Saveable{
     //REQUIRES: nothing
     //MODIFIES: this
     //EFFECTS: adds context, place, and date to myEvent, returns modified myEvent
-    private MySchoolEvent MakeSchoolEvent(MySchoolEvent mySchoolEvent) throws ParseException {
+    private MySchoolEvent MakeSchoolEvent(MySchoolEvent mySchoolEvent) throws ParseException, AlreadyExisting {
         System.out.println("Please enter the context of event.");
         String first = scanner.next();
         System.out.println("Please enter which course that "+first+" is for.");
@@ -128,6 +142,12 @@ public class MyAgenda implements Model.Agenda, Saveable{
         scanner.nextLine(); //clears the line,
         // otherwise the carriage return is taken as the next input
         // and you get a blank "selected" loop
+        for (MySchoolEvent mse : opSchoolSchedule) {
+            if ((first.equals(mse.context)) && (second.equals(mse.course)
+                    && (mySchoolEvent.MakeDate(third, four)).equals(mse.date))) {
+                throw new AlreadyExisting();
+            }
+        }
         mySchoolEvent.SetContext(first);
         mySchoolEvent.SetCourse(second);
         mySchoolEvent.SetDate(mySchoolEvent.MakeDate(third, four));
@@ -158,7 +178,6 @@ public class MyAgenda implements Model.Agenda, Saveable{
     //MODIFIES: nothing
     //EFFECTS: check if the date is in correct date form
     private void checkIfDateForm (String date) throws ParseException {
-        SimpleDateFormat takenInFormat = new SimpleDateFormat("yyyy/MM/dd");
         Date dateReceived = takenInFormat.parse(date);
     }
 
@@ -487,7 +506,6 @@ public class MyAgenda implements Model.Agenda, Saveable{
     private ArrayList<MyEvent> FindEventByDate() throws ParseException {
         String date = scanner.next();
         ArrayList<MyEvent> theEvents = new ArrayList<>();
-        SimpleDateFormat takenInFormat = new SimpleDateFormat("yyyy/MM/dd");
         for (MyEvent me : opPersonalSchedule) {
             if (date.equals(takenInFormat.format(me.DateIs())))
                 theEvents.add(me);
@@ -506,7 +524,6 @@ public class MyAgenda implements Model.Agenda, Saveable{
     private ArrayList<MyPersonalEvent> FindPersonalEventByDate() throws ParseException {
         String date = scanner.next();
         ArrayList<MyPersonalEvent> thePersonalEvents = new ArrayList<>();
-        SimpleDateFormat takenInFormat = new SimpleDateFormat("yyyy/MM/dd");
         for (MyPersonalEvent mpe : opPersonalSchedule) {
             if (date.equals(takenInFormat.format(mpe.DateIs())))
                 thePersonalEvents.add(mpe);
@@ -521,7 +538,6 @@ public class MyAgenda implements Model.Agenda, Saveable{
     private ArrayList<MySchoolEvent> FindSchoolEventByDate() throws ParseException {
         String date = scanner.next();
         ArrayList<MySchoolEvent> theSchoolEvents = new ArrayList<>();
-        SimpleDateFormat takenInFormat = new SimpleDateFormat("yyyy/MM/dd");
         for (MySchoolEvent mse : opSchoolSchedule) {
             if (date.equals(takenInFormat.format(mse.DateIs())))
                 theSchoolEvents.add(mse);
@@ -611,7 +627,6 @@ public class MyAgenda implements Model.Agenda, Saveable{
     //MODIFIES: MyPersonalSchedule
     //EFFECTS: save the operationSchedule to MyPersonalSchedule file
     // Copied from FileReaderWriter
-    @Override
     public void save(String file) throws IOException {
         PrintWriter context = new PrintWriter(file,"UTF-8");
         if (file == "MyPersonalSchedule") {
@@ -644,7 +659,6 @@ public class MyAgenda implements Model.Agenda, Saveable{
     //EFFECTS: load the MyPersonalSchedule file to the operationSchedule
     public void load(String file) throws IOException, ParseException {
         if (file == "MyPersonalSchedule") {
-            SimpleDateFormat datePrintform = new SimpleDateFormat("'<'E 'at' h a'>' MMM dd, yyyy");
             List<String> lines = Files.readAllLines(Paths.get(file));
             for (String line : lines) {
                 ArrayList<String> partsOfLine = splitOnSpace(line);
@@ -655,7 +669,6 @@ public class MyAgenda implements Model.Agenda, Saveable{
                 opPersonalSchedule.add(savedEvent);
             }
         } else if (file == "MySchoolSchedule") {
-            SimpleDateFormat datePrintform = new SimpleDateFormat("'<'E 'at' h a'>' MMM dd, yyyy");
             List<String> lines = Files.readAllLines(Paths.get(file));
             for (String line : lines) {
                 ArrayList<String> partsOfLine = splitOnSpace(line);
@@ -668,7 +681,6 @@ public class MyAgenda implements Model.Agenda, Saveable{
         }
         // for the sake of the test
         else {
-            SimpleDateFormat datePrintform = new SimpleDateFormat("'<'E 'at' h a'>' MMM dd, yyyy");
             List<String> lines = Files.readAllLines(Paths.get(file));
             for (String line : lines) {
                 ArrayList<String> partsOfLine = splitOnSpace(line);
