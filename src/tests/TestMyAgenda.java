@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
 public class TestMyAgenda {
@@ -50,6 +51,13 @@ public class TestMyAgenda {
 
         assertEquals("context1 : <Sat at 1 AM> Sep 29, 2001 : place1", lines.get(0));
         assertEquals("context2 : <Sun at 2 AM> Sep 29, 2002 : place2", lines.get(1));
+
+    }
+
+    @Test
+    public void SaveNotSupportedFile() throws IOException {
+        try{testAgenda.save("TestOutput");}
+        catch (Exception ignored) {fail("Thank you for using the system.");}
 
     }
 }

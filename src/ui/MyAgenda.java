@@ -3,6 +3,8 @@ package ui;
 import Model.Loadable;
 import Model.Saveable;
 import exceptions.AlreadyExisting;
+import exceptions.BackOneStep;
+import exceptions.BackToMenu;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -43,16 +45,26 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
                 catch (AlreadyExisting ae) {
                      System.out.println("The following event already exists.");
                 }
+                catch (BackToMenu btm) {
+                }
             }
 
             else if (operation.equals("2")) {
-                DeleteEvent();}
+                try {
+                    DeleteEvent();
+                } catch (BackToMenu btm) {
+                }
+            }
 
             else if (operation.equals("3")) {
                 FindEvent();}
 
             else if (operation.equals("4")) {
-                PrintSchedule();}
+                try {
+                    PrintSchedule();
+                } catch (BackToMenu backToMenu) {
+                }
+            }
 
             else if (operation.equals("quit")) {
                 break;}
@@ -60,22 +72,33 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
             else {System.out.println("You selected the wrong option.");}
 
         }
-        System.out.println("Thank you for using the system.");}
+    }
 
 
     @Override
-    public void AddEvent() throws IOException, ParseException, AlreadyExisting {
+    public void AddEvent() throws IOException, ParseException, AlreadyExisting, BackToMenu {
         String whichEvent;
         while (true) {
             System.out.println("Which event would you like to add? [1] personal event [2] school event");
              whichEvent = scanner.next();
 
              if (whichEvent.equals("1")) {
-                 AddPersonalEvent();
+                 try {
+                     AddPersonalEvent();
+                 } catch (BackOneStep backOneStep) {
+                 }
                  break;}
              else if (whichEvent.equals("2")) {
-                 AddSchoolEvent();
-                 break;}
+                 try {
+                     AddSchoolEvent();
+                 } catch (BackOneStep backOneStep) {
+                 }
+                 break;
+             }
+             else if ((whichEvent.equals("back")) || (whichEvent.equals("menu"))) {
+                 throw new BackToMenu();
+             }
+
              else System.out.print("You selected the wrong option. ");
         }
     }
@@ -83,7 +106,7 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
     //REQUIRES: nothing
     //MODIFIES: this
     //EFFECTS: adds an event to MyPersonalSchedule
-    public void AddPersonalEvent() throws ParseException, IOException, AlreadyExisting {
+    public void AddPersonalEvent() throws ParseException, IOException, AlreadyExisting, BackToMenu, BackOneStep {
         MyPersonalEvent opEvent = new MyPersonalEvent();
         MyPersonalEvent result;
         result = MakePersonalEvent(opEvent);
@@ -95,11 +118,15 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
     //REQUIRES: nothing
     //MODIFIES: this
     //EFFECTS: adds context, place, and date to myEvent, returns modified myPersonalEvent
-    private MyPersonalEvent MakePersonalEvent(MyPersonalEvent myPersonalEvent) throws ParseException, AlreadyExisting {
+    private MyPersonalEvent MakePersonalEvent(MyPersonalEvent myPersonalEvent) throws ParseException, AlreadyExisting, BackOneStep, BackToMenu {
         System.out.println("Please enter the context of event.");
         String first = scanner.next();
+        if (first.equals("back")) throw new BackOneStep();
+        if (first.equals("menu")) throw new BackToMenu();
         System.out.println("Please enter the place of the event.");
         String second = scanner.next();
+        if (second.equals("back")) throw new BackOneStep();
+        if (second.equals("menu")) throw new BackToMenu();
         String third = getDate();
         String four = getTime();
         scanner.nextLine(); //clears the line,
@@ -120,7 +147,7 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
     //REQUIRES: nothing
     //MODIFIES: this
     //EFFECTS: adds an event to MySchoolSchedule
-    public void AddSchoolEvent() throws ParseException, IOException, AlreadyExisting {
+    public void AddSchoolEvent() throws ParseException, IOException, AlreadyExisting, BackToMenu, BackOneStep {
         MySchoolEvent opEvent = new MySchoolEvent();
         MySchoolEvent result;
         result = MakeSchoolEvent(opEvent);
@@ -132,11 +159,15 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
     //REQUIRES: nothing
     //MODIFIES: this
     //EFFECTS: adds context, place, and date to myEvent, returns modified myEvent
-    private MySchoolEvent MakeSchoolEvent(MySchoolEvent mySchoolEvent) throws ParseException, AlreadyExisting {
+    private MySchoolEvent MakeSchoolEvent(MySchoolEvent mySchoolEvent) throws ParseException, AlreadyExisting,BackOneStep, BackToMenu {
         System.out.println("Please enter the context of event.");
         String first = scanner.next();
+        if (first.equals("back")) throw new BackOneStep();
+        if (first.equals("menu")) throw new BackToMenu();
         System.out.println("Please enter which course that "+first+" is for.");
         String second = scanner.next();
+        if (second.equals("back")) throw new BackOneStep();
+        if (second.equals("menu")) throw new BackToMenu();
         String third = getDate();
         String four = getTime();
         scanner.nextLine(); //clears the line,
@@ -213,7 +244,7 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
     //MODIFIES: this
     //EFFECTS: deletes the event from the schedule
     @Override
-    public void DeleteEvent() throws IOException {
+    public void DeleteEvent() throws IOException, BackToMenu {
         String whichEvent;
         while (true) {
             System.out.println("Which event would you like to delete? [1] personal event [2] school event");
@@ -225,7 +256,11 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
             } else if (whichEvent.equals("2")) {
                 DeleteSchoolEvent();
                 break;
-            } else System.out.print("You selected the wrong option. ");
+            }
+            else if ((whichEvent.equals("back")) || (whichEvent.equals("menu"))) {
+                throw new BackToMenu();
+            }
+            else System.out.print("You selected the wrong option. ");
         }
     }
 
@@ -578,7 +613,7 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
     //MODIFIES: nothing
     //EFFECTS: prints out the operationSchedule
     @Override
-    public void PrintSchedule() {
+    public void PrintSchedule() throws BackToMenu {
         while (true) {
             System.out.print("Which schedule do you want to print out? ");
             System.out.println("[1] entire schedule [2] personal schedule [3] school schedule");
@@ -592,6 +627,9 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
                 }
                 else if (operation.equals("3")) {
                     System.out.println(opSchoolSchedule);
+                }
+                else if ((operation.equals("back")) || (operation.equals("menu"))) {
+                    throw new BackToMenu();
                 }
                 break;
             }
@@ -703,6 +741,8 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
 
     public static void main(String[] args) throws ParseException, IOException {
         MyAgenda agenda = new MyAgenda();
-        agenda.run();
+        try {agenda.run();}
+        catch (Exception e) {System.out.println("The system has been shut down due to as system error.");}
+        finally {System.out.println("Thank you for using the system.");}
     }
 }
