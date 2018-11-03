@@ -21,6 +21,7 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
     Scanner scanner;
     SimpleDateFormat takenInFormat = new SimpleDateFormat("yyyy/MM/dd");
     SimpleDateFormat datePrintform = new SimpleDateFormat("'<'E 'at' h a'>' MMM dd, yyyy");
+    Map<String, MyPersonalEvent> opCategorySchedule = new HashMap<>();
 
     public MyAgenda() {
         opPersonalSchedule = new ArrayList<>();
@@ -35,8 +36,9 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
         String operation;
         load("MyPersonalSchedule");
         load("MySchoolSchedule");
+        load("Events By Categories");
         while (true) {
-            System.out.println("what would you like to do? [1] add an event [2] delete an event [3] find an event [4] see the schedule.");
+            System.out.println("what would you like to do? [1] add an event [2] delete an event [3] Deal with categories [4] find an event [5] see the schedule.");
             System.out.println("If you are done with every operations, enter quit.");
             operation = scanner.next();
 
@@ -57,9 +59,12 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
             }
 
             else if (operation.equals("3")) {
-                FindEvent();}
+                DealWithCategory();}
 
             else if (operation.equals("4")) {
+                FindEvent();}
+
+            else if (operation.equals("5")) {
                 try {
                     PrintSchedule();
                 } catch (BackToMenu backToMenu) {
@@ -85,13 +90,13 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
              if (whichEvent.equals("1")) {
                  try {
                      AddPersonalEvent();
-                 } catch (BackOneStep backOneStep) {
+                 } catch (BackOneStep bos) {
                  }
                  break;}
              else if (whichEvent.equals("2")) {
                  try {
                      AddSchoolEvent();
-                 } catch (BackOneStep backOneStep) {
+                 } catch (BackOneStep bos) {
                  }
                  break;
              }
@@ -132,15 +137,14 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
         scanner.nextLine(); //clears the line,
         // otherwise the carriage return is taken as the next input
         // and you get a blank "selected" loop
-        for (MyPersonalEvent mpe : opPersonalSchedule) {
-            if ((first.equals(mpe.context)) && (second.equals(mpe.place)
-                    && (myPersonalEvent.MakeDate(third, four)).equals(mpe.date))) {
-                throw new AlreadyExisting();
-            }
-        }
         myPersonalEvent.SetContext(first);
         myPersonalEvent.SetPlace(second);
         myPersonalEvent.SetDate(myPersonalEvent.MakeDate(third, four));
+        for (MyPersonalEvent mpe : opPersonalSchedule) {
+            if (myPersonalEvent.equals(mpe)) {
+                throw new AlreadyExisting();
+            }
+        }
         return myPersonalEvent;
     }
 
@@ -338,6 +342,41 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
             } while (x);
         }
         save("MyPersonalSchedule");
+    }
+
+    public void DealWithCategory() throws ParseException, IOException {
+        System.out.println("To insert category to an event, select [1]. To find an event by the category, select [2].");
+        String operation = scanner.next();
+
+        if (operation.equals("1")) {
+            System.out.println("Please enter the context of event you want to insert category to.");
+            MyPersonalEvent toBeInserted = new MyPersonalEvent();
+
+            String context = scanner.next();
+            for (MyPersonalEvent mpe : opPersonalSchedule) {
+                if (context.equals(mpe.ContextIs()))
+                    toBeInserted = mpe;
+            }
+
+            if (toBeInserted == null) {
+                System.out.println("The event with the category could not be found in the schedule");
+            } else {
+                System.out.println("Please enter the category of the event.");
+                String category = scanner.next();
+                MyPersonalEvent mapEvent = toBeInserted;
+                opCategorySchedule.put(category, mapEvent);
+                System.out.println("The category has been added.");
+            }
+            scanner.nextLine();
+        }
+
+        else if (operation.equals("2")) {
+            System.out.println("Please enter the category of the event you want to find");
+            String category = scanner.next();
+            System.out.println(opCategorySchedule.get(category));
+        }
+        save("Events By Categories");
+
     }
 
 
@@ -681,6 +720,17 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
                         + " : " + mse.course);
             }
         }
+
+        else if (file == "Events By Categories") {
+            for (MyPersonalEvent mpe : opCategorySchedule.values())
+                context.print(mpe.context + " : " +
+                        mpe.DatetoStringPrintform(mpe.date)
+                        + " : " + mpe.place);
+            for (String category : opCategorySchedule.keySet()) {
+                context.println(" : "+category);
+            }
+        }
+
         // for the sake of the test
         else {
             for (MyPersonalEvent mpe : opPersonalSchedule) {
@@ -717,6 +767,19 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
                 opSchoolSchedule.add(savedEvent);
             }
         }
+
+        if (file == "Events By Categories") {
+            List<String> lines = Files.readAllLines(Paths.get(file));
+            for (String line : lines) {
+                ArrayList<String> partsOfLine = splitOnSpace(line);
+                MyPersonalEvent savedEvent = new MyPersonalEvent();
+                savedEvent.SetContext(partsOfLine.get(0));
+                savedEvent.SetDate(datePrintform.parse(partsOfLine.get(1)));
+                savedEvent.SetPlace(partsOfLine.get(2));
+                opCategorySchedule.put(partsOfLine.get(3), savedEvent);
+            }
+        }
+
         // for the sake of the test
         else {
             List<String> lines = Files.readAllLines(Paths.get(file));
@@ -742,7 +805,7 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
     public static void main(String[] args) throws ParseException, IOException {
         MyAgenda agenda = new MyAgenda();
         try {agenda.run();}
-        catch (Exception e) {System.out.println("The system has been shut down due to as system error.");}
+        catch (Exception e) {System.out.println("The system has been shut down due to as system error." + e);}
         finally {System.out.println("Thank you for using the system.");}
     }
 }

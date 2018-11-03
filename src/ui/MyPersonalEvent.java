@@ -1,13 +1,31 @@
 package ui;
 
 import java.text.SimpleDateFormat;
+import java.util.Objects;
 
 public class MyPersonalEvent extends MyEvent{
     String place;
+    MyAgenda agenda;
 
     public void SetPlace(String place) {this.place = place;}
 
     public String PlaceIs() {return place;}
+
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MyPersonalEvent that = (MyPersonalEvent) o;
+        return Objects.equals(place, that.place) && that.context.equals(this.context) && that.date.equals(this.date);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(place);
+    }
 
     @Override
     public String toString() {
