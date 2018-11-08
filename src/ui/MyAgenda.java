@@ -19,6 +19,7 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
     ArrayList<MyPersonalEvent> opPersonalSchedule;
     ArrayList<MySchoolEvent> opSchoolSchedule;
     Scanner scanner;
+    DateFormat dateformat = new DateFormat();
     SimpleDateFormat takenInFormat = new SimpleDateFormat("yyyy/MM/dd");
     SimpleDateFormat datePrintform = new SimpleDateFormat("'<'E 'at' h a'>' MMM dd, yyyy");
     Map<String, MyPersonalEvent> opCategorySchedule = new HashMap<>();
@@ -139,7 +140,7 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
         // and you get a blank "selected" loop
         myPersonalEvent.SetContext(first);
         myPersonalEvent.SetPlace(second);
-        myPersonalEvent.SetDate(myPersonalEvent.MakeDate(third, four));
+        myPersonalEvent.SetDate(dateformat.MakeDate(third, four));
         for (MyPersonalEvent mpe : opPersonalSchedule) {
             if (myPersonalEvent.equals(mpe)) {
                 throw new AlreadyExisting();
@@ -179,13 +180,13 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
         // and you get a blank "selected" loop
         for (MySchoolEvent mse : opSchoolSchedule) {
             if ((first.equals(mse.context)) && (second.equals(mse.course)
-                    && (mySchoolEvent.MakeDate(third, four)).equals(mse.date))) {
+                    && (dateformat.MakeDate(third, four)).equals(mse.date))) {
                 throw new AlreadyExisting();
             }
         }
         mySchoolEvent.SetContext(first);
         mySchoolEvent.SetCourse(second);
-        mySchoolEvent.SetDate(mySchoolEvent.MakeDate(third, four));
+        mySchoolEvent.SetDate(dateformat.MakeDate(third, four));
         return mySchoolEvent;
     }
 
@@ -199,7 +200,7 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
             try {
                 System.out.println("Please enter the date of the event in format <yyyy/MM/dd>");
                 date = scanner.next();
-                checkIfDateForm(date);
+                dateformat.checkIfDateForm(date);
                 isItRightFormat = true;
             }
             catch (Exception e) {
@@ -226,7 +227,7 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
             try {
                 System.out.println("Please enter the time of the event in 24 hours format");
                 time = scanner.next();
-                checkIfTimeForm(time);
+                dateformat.checkIfTimeForm(time);
                 isItRightFormat = true;
             }
             catch (Exception e) {
@@ -581,11 +582,11 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
         String date = scanner.next();
         ArrayList<MyEvent> theEvents = new ArrayList<>();
         for (MyEvent me : opPersonalSchedule) {
-            if (date.equals(takenInFormat.format(me.DateIs())))
+            if (date.equals(dateformat.DatetoStringTakenform(me.DateIs())))
                 theEvents.add(me);
         }
         for (MyEvent me : opSchoolSchedule) {
-            if (date.equals(takenInFormat.format(me.DateIs())))
+            if (date.equals(dateformat.DatetoStringTakenform(me.DateIs())))
                 theEvents.add(me);
         }
         scanner.nextLine();
@@ -599,7 +600,7 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
         String date = scanner.next();
         ArrayList<MyPersonalEvent> thePersonalEvents = new ArrayList<>();
         for (MyPersonalEvent mpe : opPersonalSchedule) {
-            if (date.equals(takenInFormat.format(mpe.DateIs())))
+            if (date.equals(dateformat.DatetoStringTakenform(mpe.DateIs())))
                 thePersonalEvents.add(mpe);
         }
         scanner.nextLine();
@@ -613,7 +614,7 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
         String date = scanner.next();
         ArrayList<MySchoolEvent> theSchoolEvents = new ArrayList<>();
         for (MySchoolEvent mse : opSchoolSchedule) {
-            if (date.equals(takenInFormat.format(mse.DateIs())))
+            if (date.equals(dateformat.DatetoStringTakenform(mse.DateIs())))
                 theSchoolEvents.add(mse);
         }
         scanner.nextLine();
@@ -709,14 +710,14 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
         if (file == "MyPersonalSchedule") {
             for (MyPersonalEvent mpe : opPersonalSchedule) {
                 context.println(mpe.context + " : " +
-                        mpe.DatetoStringPrintform(mpe.date)
+                        dateformat.DatetoStringPrintform(mpe.date)
                         + " : " + mpe.place);
             }
         }
         else if (file == "MySchoolSchedule") {
             for (MySchoolEvent mse : opSchoolSchedule) {
                 context.println(mse.context + " : " +
-                        mse.DatetoStringPrintform(mse.date)
+                        dateformat.DatetoStringPrintform(mse.date)
                         + " : " + mse.course);
             }
         }
@@ -724,7 +725,7 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
         else if (file == "Events By Categories") {
             for (MyPersonalEvent mpe : opCategorySchedule.values())
                 context.print(mpe.context + " : " +
-                        mpe.DatetoStringPrintform(mpe.date)
+                        dateformat.DatetoStringPrintform(mpe.date)
                         + " : " + mpe.place);
             for (String category : opCategorySchedule.keySet()) {
                 context.println(" : "+category);
@@ -735,7 +736,7 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
         else {
             for (MyPersonalEvent mpe : opPersonalSchedule) {
                 context.println(mpe.context + " : " +
-                        mpe.DatetoStringPrintform(mpe.date)
+                        dateformat.DatetoStringPrintform(mpe.date)
                         + " : " + mpe.place);
             }
         }
@@ -762,7 +763,7 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
                 ArrayList<String> partsOfLine = splitOnSpace(line);
                 MySchoolEvent savedEvent = new MySchoolEvent();
                 savedEvent.SetContext(partsOfLine.get(0));
-                savedEvent.SetDate(datePrintform.parse(partsOfLine.get(1)));
+                savedEvent.SetDate(dateformat.StringprintFormtoDate(partsOfLine.get(1)));
                 savedEvent.SetCourse(partsOfLine.get(2));
                 opSchoolSchedule.add(savedEvent);
             }
@@ -774,7 +775,7 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
                 ArrayList<String> partsOfLine = splitOnSpace(line);
                 MyPersonalEvent savedEvent = new MyPersonalEvent();
                 savedEvent.SetContext(partsOfLine.get(0));
-                savedEvent.SetDate(datePrintform.parse(partsOfLine.get(1)));
+                savedEvent.SetDate(dateformat.StringprintFormtoDate(partsOfLine.get(1)));
                 savedEvent.SetPlace(partsOfLine.get(2));
                 opCategorySchedule.put(partsOfLine.get(3), savedEvent);
             }
@@ -787,7 +788,7 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
                 ArrayList<String> partsOfLine = splitOnSpace(line);
                 MyPersonalEvent savedEvent = new MyPersonalEvent();
                 savedEvent.SetContext(partsOfLine.get(0));
-                savedEvent.SetDate(datePrintform.parse(partsOfLine.get(1)));
+                savedEvent.SetDate(dateformat.StringprintFormtoDate(partsOfLine.get(1)));
                 savedEvent.SetPlace(partsOfLine.get(2));
                 opPersonalSchedule.add(savedEvent);
             }
