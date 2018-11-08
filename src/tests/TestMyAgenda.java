@@ -1,6 +1,7 @@
 package tests;
 
 import org.junit.jupiter.api.Test;
+import ui.DateFormat;
 import ui.MyAgenda;
 import ui.MyPersonalEvent;
 
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class TestMyAgenda {
     MyAgenda testAgenda = new MyAgenda();
+    DateFormat dateFormat = new DateFormat();
 
     @Test
     public void testLoad_personalSchedule() throws IOException, ParseException {
@@ -41,8 +43,8 @@ public class TestMyAgenda {
         testEvent2.SetContext("context2");
         testEvent1.SetPlace("place1");
         testEvent2.SetPlace("place2");
-        testEvent1.SetDate(testEvent1.MakeDate("2001/09/29", "1"));
-        testEvent2.SetDate(testEvent2.MakeDate("2002/09/29", "2"));
+        testEvent1.SetDate(dateFormat.MakeDate("2001/09/29", "1"));
+        testEvent2.SetDate(dateFormat.MakeDate("2002/09/29", "2"));
         testAgenda.PersonalScheduleIs().add(testEvent1);
         testAgenda.PersonalScheduleIs().add(testEvent2);
         testAgenda.save("TestOutput");

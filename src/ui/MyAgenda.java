@@ -11,7 +11,6 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 //copied from LoggingCalculator
@@ -20,8 +19,6 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
     ArrayList<MySchoolEvent> opSchoolSchedule;
     Scanner scanner;
     DateFormat dateformat = new DateFormat();
-    SimpleDateFormat takenInFormat = new SimpleDateFormat("yyyy/MM/dd");
-    SimpleDateFormat datePrintform = new SimpleDateFormat("'<'E 'at' h a'>' MMM dd, yyyy");
     Map<String, MyPersonalEvent> opCategorySchedule = new HashMap<>();
 
     public MyAgenda() {
@@ -212,13 +209,6 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
 
     //REQUIRES: nothing
     //MODIFIES: nothing
-    //EFFECTS: check if the date is in correct date form
-    private void checkIfDateForm (String date) throws ParseException {
-        Date dateReceived = takenInFormat.parse(date);
-    }
-
-    //REQUIRES: nothing
-    //MODIFIES: nothing
     //EFFECTS: return the time that user requested
     private String getTime() {
         boolean isItRightFormat = false;
@@ -237,13 +227,6 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
         return time;
     }
 
-    //REQUIRES: nothing
-    //MODIFIES: nothing
-    //EFFECTS: check if the time is in correct time form
-    private void checkIfTimeForm (String time) throws ParseException {
-        SimpleDateFormat takenInFormat = new SimpleDateFormat("H");
-        Date timeReceived = takenInFormat.parse(time);
-    }
 
     //REQUIRES: nothing
     //MODIFIES: this
@@ -753,7 +736,7 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
                 ArrayList<String> partsOfLine = splitOnSpace(line);
                 MyPersonalEvent savedEvent = new MyPersonalEvent();
                 savedEvent.SetContext(partsOfLine.get(0));
-                savedEvent.SetDate(datePrintform.parse(partsOfLine.get(1)));
+                savedEvent.SetDate(dateformat.StringprintFormtoDate(partsOfLine.get(1)));
                 savedEvent.SetPlace(partsOfLine.get(2));
                 opPersonalSchedule.add(savedEvent);
             }
