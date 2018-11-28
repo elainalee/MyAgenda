@@ -1,13 +1,25 @@
 package ui;
 
-import Model.Event;
+import observer.Subject;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-public abstract class MyEvent implements Event{
-    MyEvent myEvent;
+public abstract class MyEvent extends Subject{
     String context;
     Date date;
+    private List<User> users = new ArrayList<>();
+
+
+    public void addUser(User user) {
+        if (!(users.contains(user))) {
+            users.add(user);
+            user.addEvent(this);
+            addObserver(user);
+            notifyObservers();
+        }
+    }
 
 
     public void SetContext(String context) {this.context = context;}

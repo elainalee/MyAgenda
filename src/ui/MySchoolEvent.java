@@ -3,6 +3,7 @@ package ui;
 import java.text.SimpleDateFormat;
 
 public class MySchoolEvent extends MyEvent {
+    MyAgenda myAgenda;
     String course;
 
     public void SetCourse(String course) {this.course = course;}

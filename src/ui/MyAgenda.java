@@ -9,17 +9,19 @@ import exceptions.BackToMenu;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.*;
 
 //copied from LoggingCalculator
 public class MyAgenda implements Model.Agenda, Saveable, Loadable{
-    ArrayList<MyPersonalEvent> opPersonalSchedule;
-    ArrayList<MySchoolEvent> opSchoolSchedule;
-    Scanner scanner;
-    DateFormat dateformat = new DateFormat();
-    Map<String, MyPersonalEvent> opCategorySchedule = new HashMap<>();
+    MyEvent myEvent;
+    private List<MyPersonalEvent> opPersonalSchedule;
+    private List<MySchoolEvent> opSchoolSchedule;
+    private Scanner scanner;
+    private DateFormat dateformat = new DateFormat();
+    private Map<String, MyPersonalEvent> opCategorySchedule = new HashMap<>();
 
     public MyAgenda() {
         opPersonalSchedule = new ArrayList<>();
@@ -36,7 +38,8 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
         load("MySchoolSchedule");
         load("Events By Categories");
         while (true) {
-            System.out.println("what would you like to do? [1] add an event [2] delete an event [3] Deal with categories [4] find an event [5] see the schedule.");
+            System.out.println("what would you like to do? [1] add an event [2] delete an event [3] Deal with categories [4] find an event [5] see the schedule" +
+                    "[6] add a user.");
             System.out.println("If you are done with every operations, enter quit.");
             operation = scanner.next();
 
@@ -45,14 +48,14 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
                 catch (AlreadyExisting ae) {
                      System.out.println("The following event already exists.");
                 }
-                catch (BackToMenu btm) {
+                catch (BackToMenu ignored) {
                 }
             }
 
             else if (operation.equals("2")) {
                 try {
                     DeleteEvent();
-                } catch (BackToMenu btm) {
+                } catch (BackToMenu ignored) {
                 }
             }
 
@@ -69,6 +72,10 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
                 }
             }
 
+            else if (operation.equals("6")) {
+                AddUser();
+            }
+
             else if (operation.equals("quit")) {
                 break;}
 
@@ -76,7 +83,6 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
 
         }
     }
-
 
     @Override
     public void AddEvent() throws IOException, ParseException, AlreadyExisting, BackToMenu {
@@ -114,7 +120,7 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
         MyPersonalEvent result;
         result = MakePersonalEvent(opEvent);
         opPersonalSchedule.add(result);
-        System.out.println("The event has been added.");
+        result.notifyObservers();
         save("MyPersonalSchedule");
     }
 
@@ -138,11 +144,6 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
         myPersonalEvent.SetContext(first);
         myPersonalEvent.SetPlace(second);
         myPersonalEvent.SetDate(dateformat.MakeDate(third, four));
-        for (MyPersonalEvent mpe : opPersonalSchedule) {
-            if (myPersonalEvent.equals(mpe)) {
-                throw new AlreadyExisting();
-            }
-        }
         return myPersonalEvent;
     }
 
@@ -186,6 +187,21 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
         mySchoolEvent.SetDate(dateformat.MakeDate(third, four));
         return mySchoolEvent;
     }
+
+    public void AddUser() {
+        System.out.println("Please enter the name of the user.");
+        String name = scanner.next();
+        User newUser = new User(name);
+        for (MyEvent me : opSchoolSchedule) {
+            newUser.addEvent(me);
+        }
+        for (MyEvent me : opPersonalSchedule) {
+            newUser.addEvent(me);
+        }
+        scanner.nextLine();
+
+    }
+
 
     //REQUIRES: nothing
     //MODIFIES: nothing
@@ -673,14 +689,14 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
     //REQUIRES: nothing
     //MODIFIES: nothing
     //EFFECTS: returns the personal schedule
-    public ArrayList<MyPersonalEvent> PersonalScheduleIs() {
+    public List<MyPersonalEvent> PersonalScheduleIs() {
         return opPersonalSchedule;
     }
 
     //REQUIRES: nothing
     //MODIFIES: nothing
     //EFFECTS: returns the personal schedule
-    public ArrayList<MySchoolEvent> SchoolScheduleIs() {
+    public List<MySchoolEvent> SchoolScheduleIs() {
         return opSchoolSchedule;
     }
 
@@ -689,7 +705,7 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
     //EFFECTS: save the operationSchedule to MyPersonalSchedule file
     // Copied from FileReaderWriter
     public void save(String file) throws IOException {
-        PrintWriter context = new PrintWriter(file,"UTF-8");
+        PrintWriter context = new PrintWriter("files/" + file,"UTF-8");
         if (file == "MyPersonalSchedule") {
             for (MyPersonalEvent mpe : opPersonalSchedule) {
                 context.println(mpe.context + " : " +
@@ -707,11 +723,11 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
 
         else if (file == "Events By Categories") {
             for (MyPersonalEvent mpe : opCategorySchedule.values())
-                context.print(mpe.context + " : " +
+                context.println(mpe.context + " : " +
                         dateformat.DatetoStringPrintform(mpe.date)
                         + " : " + mpe.place);
             for (String category : opCategorySchedule.keySet()) {
-                context.println(" : "+category);
+                context.print(" : "+category);
             }
         }
 
@@ -730,51 +746,55 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
     //MODIFIES: MyPersonalSchedule
     //EFFECTS: load the MyPersonalSchedule file to the operationSchedule
     public void load(String file) throws IOException, ParseException {
-        if (file == "MyPersonalSchedule") {
-            List<String> lines = Files.readAllLines(Paths.get(file));
-            for (String line : lines) {
-                ArrayList<String> partsOfLine = splitOnSpace(line);
-                MyPersonalEvent savedEvent = new MyPersonalEvent();
-                savedEvent.SetContext(partsOfLine.get(0));
-                savedEvent.SetDate(dateformat.StringprintFormtoDate(partsOfLine.get(1)));
-                savedEvent.SetPlace(partsOfLine.get(2));
-                opPersonalSchedule.add(savedEvent);
+        try {
+            if (file == "MyPersonalSchedule") {
+                List<String> lines = Files.readAllLines(Paths.get("files/" + file));
+                for (String line : lines) {
+                    ArrayList<String> partsOfLine = splitOnSpace(line);
+                    MyPersonalEvent savedEvent = new MyPersonalEvent();
+                    savedEvent.SetContext(partsOfLine.get(0));
+                    savedEvent.SetDate(dateformat.StringprintFormtoDate(partsOfLine.get(1)));
+                    savedEvent.SetPlace(partsOfLine.get(2));
+                    opPersonalSchedule.add(savedEvent);
+                }
+            } else if (file == "MySchoolSchedule") {
+                List<String> lines = Files.readAllLines(Paths.get("files/" + file));
+                for (String line : lines) {
+                    ArrayList<String> partsOfLine = splitOnSpace(line);
+                    MySchoolEvent savedEvent = new MySchoolEvent();
+                    savedEvent.SetContext(partsOfLine.get(0));
+                    savedEvent.SetDate(dateformat.StringprintFormtoDate(partsOfLine.get(1)));
+                    savedEvent.SetCourse(partsOfLine.get(2));
+                    opSchoolSchedule.add(savedEvent);
+                }
             }
-        } else if (file == "MySchoolSchedule") {
-            List<String> lines = Files.readAllLines(Paths.get(file));
-            for (String line : lines) {
-                ArrayList<String> partsOfLine = splitOnSpace(line);
-                MySchoolEvent savedEvent = new MySchoolEvent();
-                savedEvent.SetContext(partsOfLine.get(0));
-                savedEvent.SetDate(dateformat.StringprintFormtoDate(partsOfLine.get(1)));
-                savedEvent.SetCourse(partsOfLine.get(2));
-                opSchoolSchedule.add(savedEvent);
-            }
-        }
 
-        if (file == "Events By Categories") {
-            List<String> lines = Files.readAllLines(Paths.get(file));
-            for (String line : lines) {
-                ArrayList<String> partsOfLine = splitOnSpace(line);
-                MyPersonalEvent savedEvent = new MyPersonalEvent();
-                savedEvent.SetContext(partsOfLine.get(0));
-                savedEvent.SetDate(dateformat.StringprintFormtoDate(partsOfLine.get(1)));
-                savedEvent.SetPlace(partsOfLine.get(2));
-                opCategorySchedule.put(partsOfLine.get(3), savedEvent);
+            if (file == "Events By Categories") {
+                List<String> lines = Files.readAllLines(Paths.get(file));
+                for (String line : lines) {
+                    ArrayList<String> partsOfLine = splitOnSpace(line);
+                    MyPersonalEvent savedEvent = new MyPersonalEvent();
+                    savedEvent.SetContext(partsOfLine.get(0));
+                    savedEvent.SetDate(dateformat.StringprintFormtoDate(partsOfLine.get(1)));
+                    savedEvent.SetPlace(partsOfLine.get(2));
+                    opCategorySchedule.put(partsOfLine.get(3), savedEvent);
+                }
             }
-        }
 
-        // for the sake of the test
-        else {
-            List<String> lines = Files.readAllLines(Paths.get(file));
-            for (String line : lines) {
-                ArrayList<String> partsOfLine = splitOnSpace(line);
-                MyPersonalEvent savedEvent = new MyPersonalEvent();
-                savedEvent.SetContext(partsOfLine.get(0));
-                savedEvent.SetDate(dateformat.StringprintFormtoDate(partsOfLine.get(1)));
-                savedEvent.SetPlace(partsOfLine.get(2));
-                opPersonalSchedule.add(savedEvent);
+            // for the sake of the test
+            else {
+                List<String> lines = Files.readAllLines(Paths.get(file));
+                for (String line : lines) {
+                    ArrayList<String> partsOfLine = splitOnSpace(line);
+                    MyPersonalEvent savedEvent = new MyPersonalEvent();
+                    savedEvent.SetContext(partsOfLine.get(0));
+                    savedEvent.SetDate(dateformat.StringprintFormtoDate(partsOfLine.get(1)));
+                    savedEvent.SetPlace(partsOfLine.get(2));
+                    opPersonalSchedule.add(savedEvent);
+                }
             }
+        } catch (NoSuchFileException e) {
+
         }
     }
 

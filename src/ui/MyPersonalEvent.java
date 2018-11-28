@@ -5,7 +5,7 @@ import java.util.Objects;
 
 public class MyPersonalEvent extends MyEvent{
     String place;
-    MyAgenda agenda;
+    MyAgenda myAgenda;
 
     public void SetPlace(String place) {this.place = place;}
 
