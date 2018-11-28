@@ -18,7 +18,7 @@ public class MyAgendaOperator extends JFrame {
         add(myAgendaDisplay);
 
         setTitle("MyAgenda");
-        setSize(600,600);
+        setSize(500,500);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 
@@ -34,7 +34,7 @@ public class MyAgendaOperator extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String eventContext = JOptionPane.showInputDialog("Enter the context of the event");
-
+                listModel.addElement(eventContext);
             }
         });
 
@@ -44,19 +44,15 @@ public class MyAgendaOperator extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int selectedIndex = list.getSelectedIndex();
                 if (selectedIndex > -1) {
-                    list.remove(selectedIndex);
                     listModel.remove(selectedIndex);
                 }
-
             }
         });
 
         button3.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //stuff you write here will happen if that button is pressed
-                String test = JOptionPane.showInputDialog("enter something and look");
-                listModel.addElement(test);
+
 
             }
         });
