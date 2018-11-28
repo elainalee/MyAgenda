@@ -1,11 +1,18 @@
 package ui;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 
 public class MyPersonalEvent extends MyEvent{
     String place;
     MyAgenda myAgenda;
+
+    public void SetPersonalEvent(String context, Date date, String place) {
+        super.SetContext(context);
+        super.SetDate(date);
+        this.place = place;
+    }
 
     public void SetPlace(String place) {this.place = place;}
 

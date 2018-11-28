@@ -127,7 +127,7 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
     //REQUIRES: nothing
     //MODIFIES: this
     //EFFECTS: adds context, place, and date to myEvent, returns modified myPersonalEvent
-    private MyPersonalEvent MakePersonalEvent(MyPersonalEvent myPersonalEvent) throws ParseException, AlreadyExisting, BackOneStep, BackToMenu {
+    private MyPersonalEvent MakePersonalEvent(MyPersonalEvent myPersonalEvent) throws ParseException, BackOneStep, BackToMenu {
         System.out.println("Please enter the context of event.");
         String first = scanner.next();
         if (first.equals("back")) throw new BackOneStep();

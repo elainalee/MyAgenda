@@ -11,23 +11,45 @@ public class MyAgendaOperator extends JFrame {
     private JButton button4;
     private JButton button5;
     private JPanel myAgendaDisplay;
-    private JList list1;
+    private JList list;
+    private DateFormat date;
 
     public MyAgendaOperator(){
         add(myAgendaDisplay);
 
-        setTitle("bla");
+        setTitle("MyAgenda");
         setSize(600,600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 
         DefaultListModel listModel = new DefaultListModel();
 
-        list1.setModel(listModel);
+        list.setModel(listModel);
 
-        listModel.addElement("Jennifer you shold have known this");
+        listModel.addElement("Jennifer you should have known this");
 
-        //int selectedIndex = list1.getSelectedIndex(); (bound is needed)
+        //int selectedIndex = list.getSelectedIndex();
+
+        button1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String eventContext = JOptionPane.showInputDialog("Enter the context of the event");
+
+            }
+        });
+
+
+        button2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedIndex = list.getSelectedIndex();
+                if (selectedIndex > -1) {
+                    list.remove(selectedIndex);
+                    listModel.remove(selectedIndex);
+                }
+
+            }
+        });
 
         button3.addActionListener(new ActionListener() {
             @Override
@@ -36,10 +58,23 @@ public class MyAgendaOperator extends JFrame {
                 String test = JOptionPane.showInputDialog("enter something and look");
                 listModel.addElement(test);
 
+            }
+        });
 
+        button4.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
 
             }
         });
+
+        button5.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+
     }
 
     public static void main(String[] args) {

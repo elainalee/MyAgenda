@@ -13,7 +13,41 @@
           <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
       </hspacer>
+      <component id="27a49" class="javax.swing.JList" binding="list">
+        <constraints>
+          <grid row="3" column="1" row-span="3" col-span="1" vsize-policy="6" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="50"/>
+          </grid>
+        </constraints>
+        <properties>
+          <model/>
+        </properties>
+      </component>
       <component id="7d001" class="javax.swing.JButton" binding="button1" default-binding="true">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Insert a New Event"/>
+        </properties>
+      </component>
+      <component id="3d0cb" class="javax.swing.JButton" binding="button2" default-binding="true">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Delete the Event"/>
+        </properties>
+      </component>
+      <component id="2225" class="javax.swing.JButton" binding="button3">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Find the Event"/>
+        </properties>
+      </component>
+      <component id="df552" class="javax.swing.JButton" binding="button4">
         <constraints>
           <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -21,45 +55,13 @@
           <text value="Button"/>
         </properties>
       </component>
-      <component id="3d0cb" class="javax.swing.JButton" binding="button2" default-binding="true">
+      <component id="62e07" class="javax.swing.JButton" binding="button5">
         <constraints>
           <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Button"/>
         </properties>
-      </component>
-      <component id="2225" class="javax.swing.JButton" binding="button4" default-binding="true">
-        <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Button"/>
-        </properties>
-      </component>
-      <component id="df552" class="javax.swing.JButton" binding="button5" default-binding="true">
-        <constraints>
-          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Button"/>
-        </properties>
-      </component>
-      <component id="62e07" class="javax.swing.JButton" binding="button3" default-binding="true">
-        <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Button"/>
-        </properties>
-      </component>
-      <component id="27a49" class="javax.swing.JList" binding="list1" default-binding="true">
-        <constraints>
-          <grid row="2" column="1" row-span="3" col-span="1" vsize-policy="6" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
-            <preferred-size width="150" height="50"/>
-          </grid>
-        </constraints>
-        <properties/>
       </component>
     </children>
   </grid>
