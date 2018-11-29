@@ -30,14 +30,15 @@ public class MyAgendaOperator extends JFrame {
 
         //int selectedIndex = list.getSelectedIndex();
 
+
         button1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String eventContext = JOptionPane.showInputDialog("Enter the context of the event");
                 listModel.addElement(eventContext);
             }
-        });
 
+        });
 
         button2.addActionListener(new ActionListener() {
             @Override

@@ -16,7 +16,6 @@ import java.util.*;
 
 //copied from LoggingCalculator
 public class MyAgenda implements Model.Agenda, Saveable, Loadable{
-    MyEvent myEvent;
     private List<MyPersonalEvent> opPersonalSchedule;
     private List<MySchoolEvent> opSchoolSchedule;
     private Scanner scanner;
@@ -39,7 +38,7 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
         load("Events By Categories");
         while (true) {
             System.out.println("what would you like to do? [1] add an event [2] delete an event [3] Deal with categories [4] find an event [5] see the schedule" +
-                    "[6] add a user.");
+                    " [6] add a user.");
             System.out.println("If you are done with every operations, enter quit.");
             operation = scanner.next();
 
@@ -344,7 +343,7 @@ public class MyAgenda implements Model.Agenda, Saveable, Loadable{
         save("MyPersonalSchedule");
     }
 
-    public void DealWithCategory() throws ParseException, IOException {
+    public void DealWithCategory() throws IOException {
         System.out.println("To insert category to an event, select [1]. To find an event by the category, select [2].");
         String operation = scanner.next();
 
