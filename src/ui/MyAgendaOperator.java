@@ -12,14 +12,11 @@ public class MyAgendaOperator extends JFrame {
     private JButton button2;
     private JButton button3;
     private JButton button4;
-    private JButton button5;
     private JPanel myAgendaDisplay;
     private JList list;
     private Map<String,TheEventInfo> Events = new HashMap<>();
-    private List<TheEventInfo> listEvents;
-    private DateFormat date;
 
-    public MyAgendaOperator(){
+    public MyAgendaOperator() throws ParseException {
         add(myAgendaDisplay);
 
         setTitle("MyAgenda");
@@ -31,9 +28,35 @@ public class MyAgendaOperator extends JFrame {
 
         list.setModel(listModel);
 
-        listEvents = new ArrayList();
+        //adding a few events in prior - 1
+        String test1 = "Test";
+        listModel.addElement(test1);
+        TheEventInfo theEventInfo1 = new TheEventInfo();
+        theEventInfo1.setContext(test1);
+        theEventInfo1.setDescription("Math test from chapter 1-13");
+        theEventInfo1.setDate("1999/09/29");
+        theEventInfo1.setTime("1");
+        Events.put(test1,theEventInfo1);
 
-        listModel.addElement("Jennifer you should have known this");
+        //adding a few events in prior - 2
+        String test2 = "Event";
+        listModel.addElement(test2);
+        TheEventInfo theEventInfo2 = new TheEventInfo();
+        theEventInfo2.setContext(test2);
+        theEventInfo2.setDescription("event happening at sauder");
+        theEventInfo2.setDate("1999/09/29");
+        theEventInfo2.setTime("2");
+        Events.put(test2,theEventInfo2);
+
+        //adding a few events in prior - 3
+        String test3 = "Meeting";
+        listModel.addElement(test3);
+        TheEventInfo theEventInfo3 = new TheEventInfo();
+        theEventInfo3.setContext(test3);
+        theEventInfo3.setDescription("meeting for commerce");
+        theEventInfo3.setDate("2000/09/29");
+        theEventInfo3.setTime("3");
+        Events.put(test3,theEventInfo3);
 
         //int selectedIndex = list.getSelectedIndex();
 
@@ -108,7 +131,7 @@ public class MyAgendaOperator extends JFrame {
                 int selectedIndex = list.getSelectedIndex();
                 if (selectedIndex > -1) {
                     TheEventInfo TEI = Events.get(listModel.get(selectedIndex));
-                    String info = ("Description: "+TEI.descriptionIs()+", Date: "+TEI.timeIs()+" on "+TEI.dateIs());
+                    String info = ("Description: "+TEI.descriptionIs()+", Date: "+TEI.dateIs()+" at "+TEI.timeIs());
                     JOptionPane.showMessageDialog(getParent(), info);
                 }
             }
@@ -149,16 +172,9 @@ public class MyAgendaOperator extends JFrame {
             }
         });
 
-        button5.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-            }
-        });
-
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParseException {
         MyAgendaOperator myAgendaOperator = new MyAgendaOperator();
         myAgendaOperator.setVisible(true);
     }
