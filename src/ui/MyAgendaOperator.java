@@ -43,16 +43,22 @@ public class MyAgendaOperator extends JFrame {
         button1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String eventContext = JOptionPane.showInputDialog("Enter the context of the event");
+                makeAddEvent(e);
+            }
 
+            public void makeAddEvent(ActionEvent e) {
+                String eventContext = JOptionPane.showInputDialog("Enter the context of the event");
                 if (!(listModel.contains(eventContext))) {
                     String eventDescription = JOptionPane.showInputDialog("Enter the description of the event");
 
-                    tryDate(eventContext,eventDescription);
+                    TheEvent theEvent = new TheEvent();
 
+                    theEvent.setContext(eventContext);
+                    theEvent.setDescription(eventDescription);
+                    setDateTime(theEvent);
 
                     listModel.addElement(eventContext);
-                    AgendaInfo.put(eventContext,eventDescription);
+                    listEvents.add(theEvent);
                 }
                 else {
                     JOptionPane.showMessageDialog(getParent(), "An event with the context already exists. Please try again.");
@@ -60,13 +66,20 @@ public class MyAgendaOperator extends JFrame {
                 }
             }
 
-            public void tryDate(String eventContext, String eventDescription){
-                TheEvent theEvent = new TheEvent();
+            public void setDateTime(TheEvent theEvent){
 
-                theEvent.setContext(eventContext);
-                theEvent.setDescription(eventDescription);
                 // Dealing with the date
                 Integer i = 0;
+                do {
+                    try {
+                        String eventDate = JOptionPane.showInputDialog("Enter the date of the event");
+                        theEvent.setDate(eventDate);
+                        i++;
+                    } catch (ParseException e) {
+                        JOptionPane.showMessageDialog(getParent(),"It is not in the right format. Please try again.");
+                    }
+                } while(i==0);
+
                 do {
                     try {
                         String eventTime = JOptionPane.showInputDialog("Enter the time of the event");
@@ -75,11 +88,7 @@ public class MyAgendaOperator extends JFrame {
                     } catch (ParseException e) {
                         JOptionPane.showMessageDialog(getParent(),"It is not in the right format. Please try again.");
                     }
-                } while(i==0);
-
-                listEvents.add(theEvent);
-                System.out.print(listEvents);
-
+                } while(i==1);
 
             }
 
@@ -91,7 +100,6 @@ public class MyAgendaOperator extends JFrame {
                 int selectedIndex = list.getSelectedIndex();
                 if (selectedIndex > -1) {
                     listModel.remove(selectedIndex);
-                    AgendaInfo.remove(listModel.get(selectedIndex));
                 }
             }
         });
