@@ -3,6 +3,7 @@ package ui;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class MyAgendaOperator extends JFrame {
     private JButton button1;
@@ -12,6 +13,7 @@ public class MyAgendaOperator extends JFrame {
     private JButton button5;
     private JPanel myAgendaDisplay;
     private JList list;
+    private ArrayList listEvents;
     private DateFormat date;
 
     public MyAgendaOperator(){
@@ -34,8 +36,15 @@ public class MyAgendaOperator extends JFrame {
         button1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                TheEvent theEvent = new TheEvent();
                 String eventContext = JOptionPane.showInputDialog("Enter the context of the event");
+                String eventDescription = JOptionPane.showInputDialog("Enter the description of the event");
+
+                theEvent.setContext(eventContext);
+                theEvent.setDescription(eventDescription);
+
                 listModel.addElement(eventContext);
+                listEvents.add(theEvent);
             }
 
         });
