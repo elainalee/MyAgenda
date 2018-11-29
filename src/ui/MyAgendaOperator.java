@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MyAgendaOperator extends JFrame {
     private JButton button1;
@@ -13,7 +14,7 @@ public class MyAgendaOperator extends JFrame {
     private JButton button5;
     private JPanel myAgendaDisplay;
     private JList list;
-    private ArrayList listEvents;
+    private List<TheEvent> listEvents;
     private DateFormat date;
 
     public MyAgendaOperator(){
@@ -28,6 +29,8 @@ public class MyAgendaOperator extends JFrame {
 
         list.setModel(listModel);
 
+        List listEvents = new ArrayList();
+
         listModel.addElement("Jennifer you should have known this");
 
         //int selectedIndex = list.getSelectedIndex();
@@ -37,14 +40,22 @@ public class MyAgendaOperator extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 TheEvent theEvent = new TheEvent();
+
                 String eventContext = JOptionPane.showInputDialog("Enter the context of the event");
-                String eventDescription = JOptionPane.showInputDialog("Enter the description of the event");
 
-                theEvent.setContext(eventContext);
-                theEvent.setDescription(eventDescription);
+                if (!(listModel.contains(eventContext))) {
+                    String eventDescription = JOptionPane.showInputDialog("Enter the description of the event");
 
-                listModel.addElement(eventContext);
-                listEvents.add(theEvent);
+                    theEvent.setContext(eventContext);
+                    theEvent.setDescription(eventDescription);
+
+                    listModel.addElement(eventContext);
+                    listEvents.add(theEvent);
+                }
+                else {
+                    JOptionPane.showMessageDialog(getParent(), "An event with the context already exists. Please try again.");
+                    actionPerformed(e);
+                }
             }
 
         });
