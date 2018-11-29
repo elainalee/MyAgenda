@@ -4,10 +4,8 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class MyAgendaOperator extends JFrame {
     private JButton button1;
@@ -53,6 +51,7 @@ public class MyAgendaOperator extends JFrame {
 
                     TheEventInfo theEventInfo = new TheEventInfo();
 
+                    theEventInfo.setContext(eventContext);
                     theEventInfo.setDescription(eventDescription);
                     setDateTime(theEventInfo);
                     Events.put(eventContext,theEventInfo);
@@ -118,7 +117,35 @@ public class MyAgendaOperator extends JFrame {
         button4.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                getDate();
+            }
 
+            public void getDate() {
+                Integer i = 0;
+                do {
+                    try {
+                        String eventDate = JOptionPane.showInputDialog("Enter the date of the event");
+                        SimpleDateFormat takenInFormat_date = new SimpleDateFormat("yyyy/MM/dd");
+                        Date eventDate_date = takenInFormat_date.parse(eventDate);
+                        //getting date ended;
+                        List<TheEventInfo> eventsToPrint = new ArrayList<>();
+                        for (TheEventInfo TEI : Events.values()) {
+                            if (TEI.date.equals(eventDate_date)) {
+                                eventsToPrint.add(TEI);
+                            }
+                        }
+                        List<String> contextsToPrint = new ArrayList<>();
+                        for (TheEventInfo TEI : eventsToPrint) {
+                            contextsToPrint.add(TEI.context);
+                        }
+                        JOptionPane.showMessageDialog(getParent(),contextsToPrint);
+                        i++;
+
+
+                    } catch (ParseException e) {
+                        JOptionPane.showMessageDialog(getParent(),"It is not in the right format. Please try again.");
+                    }
+                } while (i==0);
             }
         });
 

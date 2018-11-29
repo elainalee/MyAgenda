@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class TheEventInfo {
+    protected String context;
     protected String description;
     protected Date date;
     protected Date time;
@@ -12,6 +13,8 @@ public class TheEventInfo {
     SimpleDateFormat takenInFormat_time = new SimpleDateFormat("h");
     SimpleDateFormat datePrintform = new SimpleDateFormat("MMM dd, yyyy");
 
+
+    public void setContext(String context) {this.context = context;}
 
     public void setDescription(String description) {
         this.description = description;
