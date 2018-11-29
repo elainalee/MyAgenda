@@ -4,7 +4,9 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MyAgendaOperator extends JFrame {
     private JButton button1;
@@ -14,6 +16,7 @@ public class MyAgendaOperator extends JFrame {
     private JButton button5;
     private JPanel myAgendaDisplay;
     private JList list;
+    private Map<String,String> AgendaInfo = new HashMap<>();
     private List<TheEvent> listEvents;
     private DateFormat date;
 
@@ -29,7 +32,7 @@ public class MyAgendaOperator extends JFrame {
 
         list.setModel(listModel);
 
-        List listEvents = new ArrayList();
+        listEvents = new ArrayList();
 
         listModel.addElement("Jennifer you should have known this");
 
@@ -50,7 +53,7 @@ public class MyAgendaOperator extends JFrame {
                     theEvent.setDescription(eventDescription);
 
                     listModel.addElement(eventContext);
-                    listEvents.add(theEvent);
+                    AgendaInfo.put(eventContext,eventDescription);
                 }
                 else {
                     JOptionPane.showMessageDialog(getParent(), "An event with the context already exists. Please try again.");
@@ -66,6 +69,7 @@ public class MyAgendaOperator extends JFrame {
                 int selectedIndex = list.getSelectedIndex();
                 if (selectedIndex > -1) {
                     listModel.remove(selectedIndex);
+                    AgendaInfo.remove(listModel.get(selectedIndex));
                 }
             }
         });
@@ -73,8 +77,11 @@ public class MyAgendaOperator extends JFrame {
         button3.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-
+                int selectedIndex = list.getSelectedIndex();
+                if (selectedIndex > -1) {
+                    String description = AgendaInfo.get(listModel.get(selectedIndex));
+                    JOptionPane.showMessageDialog(getParent(), description);
+                }
             }
         });
 

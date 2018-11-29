@@ -11,4 +11,8 @@ public class TheEvent {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public String contextIs() {return context;}
+
+    public String descriptionIs() {return description;}
 }
