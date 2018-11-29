@@ -3,6 +3,7 @@ package ui;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,15 +43,13 @@ public class MyAgendaOperator extends JFrame {
         button1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                TheEvent theEvent = new TheEvent();
-
                 String eventContext = JOptionPane.showInputDialog("Enter the context of the event");
 
                 if (!(listModel.contains(eventContext))) {
                     String eventDescription = JOptionPane.showInputDialog("Enter the description of the event");
 
-                    theEvent.setContext(eventContext);
-                    theEvent.setDescription(eventDescription);
+                    tryDate(eventContext,eventDescription);
+
 
                     listModel.addElement(eventContext);
                     AgendaInfo.put(eventContext,eventDescription);
@@ -59,6 +58,29 @@ public class MyAgendaOperator extends JFrame {
                     JOptionPane.showMessageDialog(getParent(), "An event with the context already exists. Please try again.");
                     actionPerformed(e);
                 }
+            }
+
+            public void tryDate(String eventContext, String eventDescription){
+                TheEvent theEvent = new TheEvent();
+
+                theEvent.setContext(eventContext);
+                theEvent.setDescription(eventDescription);
+                // Dealing with the date
+                Integer i = 0;
+                do {
+                    try {
+                        String eventTime = JOptionPane.showInputDialog("Enter the time of the event");
+                        theEvent.setTime(eventTime);
+                        i++;
+                    } catch (ParseException e) {
+                        JOptionPane.showMessageDialog(getParent(),"It is not in the right format. Please try again.");
+                    }
+                } while(i==0);
+
+                listEvents.add(theEvent);
+                System.out.print(listEvents);
+
+
             }
 
         });
