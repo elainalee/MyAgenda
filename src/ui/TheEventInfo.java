@@ -4,17 +4,14 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class TheEvent {
-    protected String context;
+public class TheEventInfo {
     protected String description;
     protected Date date;
     protected Date time;
     SimpleDateFormat takenInFormat_date = new SimpleDateFormat("yyyy/MM/dd");
     SimpleDateFormat takenInFormat_time = new SimpleDateFormat("h");
+    SimpleDateFormat datePrintform = new SimpleDateFormat("MMM dd, yyyy");
 
-    public void setContext(String context) {
-        this.context = context;
-    }
 
     public void setDescription(String description) {
         this.description = description;
@@ -29,11 +26,15 @@ public class TheEvent {
         Date eventDate = takenInFormat_date.parse(date);
         this.date = eventDate;}
 
-    public String contextIs() {return context;}
-
     public String descriptionIs() {return description;}
 
-    public Date dateIs() {return date;}
+    public String dateIs() {
+        String String_dateinPrintform = datePrintform.format(date);
+        return String_dateinPrintform;
+    }
 
-    public Date timeIs() {return time;}
+    public String timeIs() {
+        String String_timeinPrintform = takenInFormat_time.format(time);
+        return String_timeinPrintform;
+    }
 }
